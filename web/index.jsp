@@ -1,4 +1,5 @@
-<%--
+<%@ page import="top.lingyuzhao.diskMirror.backEnd.conf.SpringConfig" %>
+<%@ page import="top.lingyuzhao.diskMirror.backEnd.conf.WebConf" %><%--
   Created by IntelliJ IDEA.
   User: zhao
   Date: 2023/12/15
@@ -24,6 +25,7 @@
 </head>
 <body>
 <div>
+    <button onclick="window.open('<%=SpringConfig.getOption(WebConf.PROTOCOL_PREFIX)%>')">前往盘镜文件系统</button>
     <button onclick="window.open('upload.jsp')">上传</button>
     <button onclick="getUrls(prompt('输入您要查询的空间id', '1024'), 'TEXT')">查询</button>
     <button onclick="remove(prompt('输入您要删除的文件所在空间id', '1024'), 'TEXT', prompt('输入您要删除的文件名称', 'test.txt'))">删除</button>
@@ -38,6 +40,9 @@
      * @param type {'TEXT'|'Binary'}
      */
     function getUrls(userId, type) {
+        if (userId === null || userId === '' || type == null || type === '') {
+            return
+        }
         const formData = new FormData();
         // 设置请求参数
         formData.append('params', JSON.stringify({
@@ -68,6 +73,9 @@
      * @param fileName 需要被删除的文件名称
      */
     function remove(userId, type, fileName) {
+        if (userId === null || userId === '' || type == null || type === '' || fileName === null || fileName === '') {
+            return
+        }
         const formData = new FormData();
         // 设置请求参数
         formData.append('params', JSON.stringify({
