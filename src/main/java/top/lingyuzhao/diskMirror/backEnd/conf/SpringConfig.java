@@ -21,17 +21,31 @@ import top.lingyuzhao.diskMirror.core.DiskMirror;
 public final class SpringConfig {
 
     public static final WebConf WEB_CONF = new WebConf();
-
-
     /**
      * 回复页面要使用的字符集
      */
     public static final String CHARSET = "UTF-8";
-
+    /**
+     * 跨域允许主机1
+     */
+    public static final String
+            CROSS_ARRAY_1 = "*.lingyuzhao.top",
+            CROSS_ARRAY_2 = "*.lingyuzhao.top",
+            CROSS_ARRAY_3 = "*.lingyuzhao.top";
     /**
      * 操作过程中需要使用的适配器对象
      */
     public static Adapter adapter;
+
+    static {
+        SpringConfig.putOption(WebConf.ROOT_DIR, "/DiskMirror/data");
+        SpringConfig.putOption(WebConf.DATA_TEXT_CHARSET, "UTF-8");
+        SpringConfig.putOption(WebConf.IO_MODE, DiskMirror.LocalFSAdapter);
+        // 设置协议前缀 需要确保你的服务器可以访问到这里！！！
+        SpringConfig.putOption(WebConf.PROTOCOL_PREFIX, "http://diskmirror.lingyuzhao.top");
+        // 设置后端的IO模式
+        SpringConfig.putOption(WebConf.IO_MODE, DiskMirror.LocalFSAdapter);
+    }
 
     /**
      * 手动修改并设置一些配置

@@ -3,7 +3,6 @@ package top.lingyuzhao.diskMirror.backEnd.conf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import top.lingyuzhao.diskMirror.conf.Config;
-import top.lingyuzhao.diskMirror.core.DiskMirror;
 
 /**
  * web 配置类
@@ -23,9 +22,4 @@ public final class WebConf extends Config {
      */
     public static final Logger LOGGER = LoggerFactory.getLogger("DiskMirrorBackEnd");
 
-
-    {
-        super.put(DATA_TEXT_CHARSET, "UTF-8");
-        super.put(IO_MODE, DiskMirror.LocalFSAdapter);
-    }
 }

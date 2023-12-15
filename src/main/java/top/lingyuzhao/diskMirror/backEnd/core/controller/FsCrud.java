@@ -8,7 +8,6 @@ import top.lingyuzhao.diskMirror.backEnd.conf.SpringConfig;
 import top.lingyuzhao.diskMirror.backEnd.conf.WebConf;
 import top.lingyuzhao.diskMirror.backEnd.utils.HttpUtils;
 import top.lingyuzhao.diskMirror.core.Adapter;
-import top.lingyuzhao.diskMirror.core.DiskMirror;
 import zhao.utils.IOUtils;
 
 import javax.servlet.ServletException;
@@ -28,15 +27,10 @@ import java.io.InputStream;
         // 告知前端页面，回复数据的解析方式
         produces = "text/html;charset=" + SpringConfig.CHARSET
 )
-@CrossOrigin(value = "*", allowCredentials = "true")
+@CrossOrigin(value = {
+        SpringConfig.CROSS_ARRAY_1, SpringConfig.CROSS_ARRAY_2, SpringConfig.CROSS_ARRAY_3
+}, allowCredentials = "true")
 public class FsCrud implements CRUD {
-
-    static {
-        // 设置协议前缀 需要确保你的服务器可以访问到这里！！！
-        SpringConfig.putOption(WebConf.PROTOCOL_PREFIX, "http://diskmirror.lingyuzhao.top");
-        // 设置后端的IO模式
-        SpringConfig.putOption(WebConf.IO_MODE, DiskMirror.LocalFSAdapter);
-    }
 
     /**
      * 从配置类中获取到适配器对象
