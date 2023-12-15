@@ -60,7 +60,7 @@ public class ServletInit extends AbstractDispatcherServletInitializer {
         // 实例化字符编码过滤器
         final CharacterEncodingFilter characterEncodingFilter = new CharacterEncodingFilter();
         // 设置字符编码集
-        characterEncodingFilter.setEncoding(SpringConfig.getOption(SpringConfig.WebConf.DATA_TEXT_CHARSET).toString());
+        characterEncodingFilter.setEncoding(SpringConfig.getOption(WebConf.DATA_TEXT_CHARSET).toString());
         // 将过滤器数组返回出去
         return new Filter[]{
                 characterEncodingFilter

@@ -3,7 +3,6 @@ package top.lingyuzhao.diskMirror.backEnd.conf;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import top.lingyuzhao.diskMirror.conf.Config;
 import top.lingyuzhao.diskMirror.core.Adapter;
 import top.lingyuzhao.diskMirror.core.DiskMirror;
 
@@ -22,6 +21,13 @@ import top.lingyuzhao.diskMirror.core.DiskMirror;
 public final class SpringConfig {
 
     public static final WebConf WEB_CONF = new WebConf();
+
+
+    /**
+     * 回复页面要使用的字符集
+     */
+    public static final String CHARSET = "UTF-8";
+
     /**
      * 操作过程中需要使用的适配器对象
      */
@@ -75,22 +81,4 @@ public final class SpringConfig {
         adapter = ((DiskMirror) getOption(WebConf.IO_MODE)).getAdapter(WEB_CONF);
     }
 
-    /**
-     * web 配置类
-     */
-    public static final class WebConf extends Config {
-        /**
-         * 文本数据处理时需要使用的编码集
-         */
-        public static final String DATA_TEXT_CHARSET = "data.text.charset";
-        /**
-         * 盘镜 的 处理模式设置
-         */
-        public static final String IO_MODE = "diskMirror.mode";
-
-        {
-            super.put(DATA_TEXT_CHARSET, "UTF-8");
-            super.put(IO_MODE, DiskMirror.LocalFSAdapter);
-        }
-    }
 }
