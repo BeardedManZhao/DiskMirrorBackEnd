@@ -26,47 +26,45 @@
 </body>
 <script rel="script" type="text/javascript" src="http://www.lingyuzhao.top/js/lib/axios.min.js"></script>
 <script rel="script" type="text/javascript" src="http://www.lingyuzhao.top/js/utils.js"></script>
+<script rel="script" type="text/javascript" src="js/diskMirror.js"></script>
 <script>
     const elementsByName0 = document.getElementsByName("userId")[0];
     const elementsByName1 = document.getElementsByName("file")[0];
     const elementsByName2 = document.getElementsByName("fileType")[0];
 
+    // 实例化盘镜
+    const diskMirror = new DiskMirror("http://www.lingyuzhao.top/DiskMirrorBackEnd");
 
     document.querySelector('form').addEventListener('submit', function (e) {
         e.preventDefault();
-        const formData = new FormData();
-        // 设置请求参数数据包
-        formData.append('params', JSON.stringify({
-            // 文件名字
-            fileName: elementsByName1.files[0].name,
-            // 空间id
-            userId: parseInt(elementsByName0.value),
-            // 文件类型
-            type: elementsByName2.value === 'Y' || elementsByName2.value === 'y' ? 'Binary' : 'TEXT'
-        }))
-        // 设置文件数据包
-        formData.append('file', elementsByName1.files[0])
         // 开始进行请求发送
-        axios(
+        diskMirror.upload(
+            // 设置请求参数数据包
             {
-                method: 'post',
-                url: '/DiskMirrorBackEnd/FsCrud/add',
-                data: formData,
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
+                // 文件名字
+                fileName: elementsByName1.files[0].name,
+                // 空间id
+                userId: parseInt(elementsByName0.value),
+                // 文件类型
+                type: elementsByName2.value === 'Y' || elementsByName2.value === 'y' ? 'Binary' : 'TEXT'
+            },
+            // 设置文件数据包
+            elementsByName1.files[0],
+            // 设置成功之后的回调函数
+            function (res) {
+                // 打印结果
+                document.getElementById('res_show').innerText = formatJson(res)
+                // 设置 url
+                const elementById = document.getElementById('download_a');
+                elementById.href = res.url;
+                elementById.innerText = '获取文件数据';
+            },
+            // 设置失败之后的回调函数
+            function (err) {
+                // 处理错误
+                console.log(err);
             }
-        ).then(function (res) {
-            // 打印结果
-            document.getElementById('res_show').innerText = formatJson(res.data)
-            // 设置 url
-            const elementById = document.getElementById('download_a');
-            elementById.href = res.data.url;
-            elementById.innerText = '获取文件数据';
-        }).catch(function (err) {
-            // 处理错误
-            console.log(err);
-        });
+        )
     });
 </script>
 </html>
