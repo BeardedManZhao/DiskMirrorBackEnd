@@ -41,7 +41,7 @@ url，在诸多场景中可以简化IO相关的实现操作，能够降低开发
 
 ### 我如何使用 盘镜
 
-在这里您需要获取到我们在盘镜系统中的 js 文件 装载到前端项目中，然后在前端的 JS 中进行函数的调用即可，接下来我们将演示一些操作。
+在这里您需要获取到我们在盘镜系统中的 [diskMirror.js](https://github.com/BeardedManZhao/DiskMirrorBackEnd/blob/main/web/js/diskMirror.js) 文件 装载到前端项目中，然后在前端的 JS 中进行函数的调用即可，接下来我们将演示一些操作。
 
 #### 实例化盘镜
 
@@ -173,3 +173,9 @@ const diskMirror = new DiskMirror("http://xxx.xxx.xxx");
 
 </html>
 ```
+
+
+----
+
+- diskMirror 后端服务器版本：https://github.com/BeardedManZhao/DiskMirrorBackEnd.git
+- diskMirror Java API 版本：https://github.com/BeardedManZhao/DiskMirror.git
