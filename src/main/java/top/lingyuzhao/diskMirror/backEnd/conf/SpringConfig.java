@@ -37,9 +37,15 @@ public final class SpringConfig {
      */
     public static Adapter adapter;
 
+    /*
+     * 静态代码块 用于初始化一些配置
+     */
     static {
+        // 配置需要被 盘镜 管理的路径 此路径也应该可以被 web 后端服务器访问到
         SpringConfig.putOption(WebConf.ROOT_DIR, "/DiskMirror/data");
+        // 配置一切需要被盘镜处理的数据的编码
         SpringConfig.putOption(WebConf.DATA_TEXT_CHARSET, "UTF-8");
+        // 配置后端的IO模式 在这里我们使用的是本地适配器 您可以选择其它适配器或自定义适配器
         SpringConfig.putOption(WebConf.IO_MODE, DiskMirror.LocalFSAdapter);
         // 设置协议前缀 需要确保你的服务器可以访问到这里！！！
         SpringConfig.putOption(WebConf.PROTOCOL_PREFIX, "http://diskmirror.lingyuzhao.top");
