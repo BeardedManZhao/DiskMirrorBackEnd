@@ -50,7 +50,7 @@ url，在诸多场景中可以简化IO相关的实现操作，能够降低开发
 
 ```js
     // 实例化 盘镜 在这里指向盘镜的后端服务器
-const diskMirror = new DiskMirror("http://www.lingyuzhao.top/DiskMirrorBackEnd");
+const diskMirror = new DiskMirror("http://xxx.xxx.xxx");
 ```
 
 #### 上传文件数据
@@ -77,7 +77,7 @@ const diskMirror = new DiskMirror("http://www.lingyuzhao.top/DiskMirrorBackEnd")
 <script rel="script" src="xx/xxx/diskMirror.js" type="text/javascript"></script>
 <script>
     // 实例化 盘镜 在这里指向盘镜的后端服务器
-    const diskMirror = new DiskMirror("http://www.lingyuzhao.top/DiskMirrorBackEnd");
+    const diskMirror = new DiskMirror("http://xxx.xxx.xxx");
     document.getElementById("fileInput").onchange = () => {
         // 获取到文件数据
         const file = document.getElementById("fileInput").files[0];
@@ -132,7 +132,7 @@ const diskMirror = new DiskMirror("http://www.lingyuzhao.top/DiskMirrorBackEnd")
 <script rel="script" src="xx/xxx/diskMirror.js" type="text/javascript"></script>
 <script>
     // 实例化 盘镜 在这里指向盘镜的后端服务器
-    const diskMirror = new DiskMirror("http://www.lingyuzhao.top/DiskMirrorBackEnd");
+    const diskMirror = new DiskMirror("http://xxx.xxx.xxx");
     // 查询出文件数据 参数分别是 文件所属空间 类型 以及回调函数 在这里您同样可以传递两个回调，第一个是成功之后的回调，第二个是失败之后的回调，在这里我们只传递了一个函数 这是为了方便观察代码
     diskMirror.getUrls(1024, 'TEXT', (res) => {
         // 如果查询到数据 就在这里将所有的 文件数据的 url 显示
@@ -163,7 +163,7 @@ const diskMirror = new DiskMirror("http://www.lingyuzhao.top/DiskMirrorBackEnd")
 <script rel="script" src="xx/xxx/diskMirror.js" type="text/javascript"></script>
 <script>
     // 实例化 盘镜 在这里指向盘镜的后端服务器
-    const diskMirror = new DiskMirror("http://www.lingyuzhao.top/DiskMirrorBackEnd");
+    const diskMirror = new DiskMirror("http://xxx.xxx.xxx");
     // 删除文件的操作和获取文件 url 的操作很接近，只是在 文件类型的后面 多了文件名称的形参
     diskMirror.remove(1024, 'TEXT', 'fileName.txt', (res) => {
         // 如果查询到数据 就在这里将所有的 文件数据的 url 显示
