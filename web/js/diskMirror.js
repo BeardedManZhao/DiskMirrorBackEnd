@@ -40,8 +40,12 @@ class DiskMirror {
      * @param file {File} 需要被上传的文件对象
      * @param okFun {function} 操作成功之后的回调函数 输入是被上传文件的json对象
      * @param errorFun {function} 操作失败之后的回调函数 输入是错误信息
+     * @param checkFun {function} 上传前的检查函数 输入是上传的文件对象的 json 数据，如果返回的是一个false 则代表不进行上传操作
      */
-    upload(params, file, okFun = undefined, errorFun = undefined) {
+    upload(params, file, okFun = undefined, errorFun = undefined, checkFun = undefined) {
+        if (checkFun !== undefined && !checkFun(params)){
+            return;
+        }
         const formData = new FormData();
         // 设置请求参数数据包
         formData.append('params', JSON.stringify(params))
@@ -80,8 +84,9 @@ class DiskMirror {
      * @param type {'TEXT'|'Binary'} 文件类型
      * @param okFun {function} 操作成功之后的回调函数 输入是被获取额结果文件的json对象
      * @param errorFun {function} 操作失败之后的回调函数 输入是错误信息
+     * @param checkFun {function} 获取前的检查函数 输入是请求参数对象，如果返回的是一个false 则代表不进行获取操作
      */
-    getUrls(userId, type, okFun = undefined, errorFun = undefined) {
+    getUrls(userId, type, okFun = undefined, errorFun = undefined, checkFun = undefined) {
         // getUrls function body
         if (userId === undefined || type === undefined || type === '') {
             console.error("您必须要输入 userId 以及 type 参数才可以进行 url 的获取")
@@ -89,10 +94,14 @@ class DiskMirror {
         }
         const formData = new FormData();
         // 设置请求参数
-        formData.append('params', JSON.stringify({
+        const params = {
             userId: userId,
             type: type
-        }))
+        }
+        if (checkFun !== undefined && !checkFun(params)){
+            return;
+        }
+        formData.append('params', JSON.stringify(params))
         // 开始进行请求发送
         axios(
             {
@@ -125,19 +134,24 @@ class DiskMirror {
      * @param fileName {string} 需要被删除的文件名称
      * @param okFun {function} 操作成功之后的回调函数 输入是被删除的文件的json对象
      * @param errorFun {function} 操作失败之后的回调函数 输入是错误信息
+     * @param checkFun {function} 删除前的检查函数 输入是请求参数对象，如果返回的是一个false 则代表不进行删除操作
      */
-    remove(userId, type, fileName, okFun = undefined, errorFun = undefined) {
+    remove(userId, type, fileName, okFun = undefined, errorFun = undefined, checkFun = undefined) {
         if (userId === undefined || type == null || type === '' || fileName === undefined || fileName === '') {
             console.error("您必须要输入 userId 以及 type 和 fileName 参数才可以进行删除")
             return
         }
         const formData = new FormData();
         // 设置请求参数
-        formData.append('params', JSON.stringify({
+        const params = {
             fileName: fileName,
             userId: userId,
             type: type
-        }))
+        }
+        if (checkFun !== undefined && !checkFun(params)){
+            return;
+        }
+        formData.append('params', JSON.stringify(params))
         // 开始进行请求发送
         axios(
             {
