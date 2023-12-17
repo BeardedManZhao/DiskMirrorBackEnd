@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" build-on-make="true" name="DiskMirrorBackEnd:war">
+    <output-path>$PROJECT_DIR$/out/artifacts/DiskMirrorBackEnd_war</output-path>
+    <root id="archive" name="DiskMirrorBackEnd.war">
+      <element id="artifact" artifact-name="DiskMirrorBackEnd:war exploded" />
+    </root>
+  </artifact>
+</component>

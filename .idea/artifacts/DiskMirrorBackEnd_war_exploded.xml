@@ -1,0 +1,29 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" build-on-make="true" name="DiskMirrorBackEnd:war exploded">
+    <output-path>$PROJECT_DIR$/out/artifacts/DiskMirrorBackEnd_war_exploded</output-path>
+    <root id="root">
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="DiskMirrorBackEnd" />
+        </element>
+        <element id="directory" name="lib">
+          <element id="library" level="project" name="Maven: org.apache.logging.log4j:log4j-slf4j-impl:2.20.0" />
+          <element id="library" level="project" name="Maven: org.slf4j:slf4j-api:1.7.25" />
+          <element id="library" level="project" name="Maven: org.apache.logging.log4j:log4j-api:2.20.0" />
+          <element id="library" level="project" name="Maven: org.apache.logging.log4j:log4j-core:2.20.0" />
+          <element id="library" level="project" name="Maven: org.springframework:spring-webmvc:5.2.10.RELEASE" />
+          <element id="library" level="project" name="Maven: org.springframework:spring-aop:5.2.10.RELEASE" />
+          <element id="library" level="project" name="Maven: org.springframework:spring-beans:5.2.10.RELEASE" />
+          <element id="library" level="project" name="Maven: org.springframework:spring-context:5.2.10.RELEASE" />
+          <element id="library" level="project" name="Maven: org.springframework:spring-core:5.2.10.RELEASE" />
+          <element id="library" level="project" name="Maven: org.springframework:spring-jcl:5.2.10.RELEASE" />
+          <element id="library" level="project" name="Maven: org.springframework:spring-expression:5.2.10.RELEASE" />
+          <element id="library" level="project" name="Maven: org.springframework:spring-web:5.2.10.RELEASE" />
+          <element id="library" level="project" name="Maven: io.github.BeardedManZhao:diskMirror:1.0.5" />
+          <element id="library" level="project" name="Maven: io.github.BeardedManZhao:zhao-utils:1.0.20231112" />
+        </element>
+      </element>
+      <element id="javaee-facet-resources" facet="DiskMirrorBackEnd/web/Web" />
+    </root>
+  </artifact>
+</component>
