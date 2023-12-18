@@ -19,8 +19,8 @@
           <element id="library" level="project" name="Maven: org.springframework:spring-jcl:5.2.10.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework:spring-expression:5.2.10.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework:spring-web:5.2.10.RELEASE" />
-          <element id="library" level="project" name="Maven: io.github.BeardedManZhao:diskMirror:1.0.5" />
           <element id="library" level="project" name="Maven: io.github.BeardedManZhao:zhao-utils:1.0.20231112" />
+          <element id="library" level="project" name="diskMirror-1.0.6" />
         </element>
       </element>
       <element id="javaee-facet-resources" facet="DiskMirrorBackEnd/web/Web" />
