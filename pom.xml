@@ -47,11 +47,11 @@
             <artifactId>spring-webmvc</artifactId>
             <version>5.2.10.RELEASE</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>io.github.BeardedManZhao</groupId>-->
-<!--            <artifactId>diskMirror</artifactId>-->
-<!--            <version>1.0.5</version>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>io.github.BeardedManZhao</groupId>
+            <artifactId>diskMirror</artifactId>
+            <version>1.0.6</version>
+        </dependency>
         <dependency>
             <groupId>com.alibaba.fastjson2</groupId>
             <artifactId>fastjson2</artifactId>

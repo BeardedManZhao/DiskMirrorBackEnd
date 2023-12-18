@@ -40,10 +40,10 @@ class DiskMirror {
      * @param file {File} 需要被上传的文件对象
      * @param okFun {function} 操作成功之后的回调函数 输入是被上传文件的json对象
      * @param errorFun {function} 操作失败之后的回调函数 输入是错误信息
-     * @param checkFun {function} 上传前的检查函数 输入是上传的文件对象的 json 数据，如果返回的是一个false 则代表不进行上传操作
+     * @param checkFun {function} 上传前的检查函数 输入是上传的文件对象的 json 数据 以及 文件对象本身，如果返回的是一个false 则代表不进行上传操作
      */
     upload(params, file, okFun = undefined, errorFun = (e) => alert(e['res']), checkFun = undefined) {
-        if (checkFun !== undefined && !checkFun(params)) {
+        if (checkFun !== undefined && !checkFun(params, file)) {
             return;
         }
         const formData = new FormData();
