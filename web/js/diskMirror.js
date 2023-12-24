@@ -194,4 +194,62 @@ class DiskMirror {
             }
         });
     }
+
+    /**
+     * 针对指定空间的指定文件进行重命名
+     * @param userId {int} 空间id
+     * @param type {'TEXT'|'Binary'} 文件类型
+     * @param fileName {string} 需要被变更的文件名称
+     * @param newName {string} 变更之后的文件名称
+     * @param okFun {function} 操作成功之后的回调函数 输入是被删除的文件的json对象
+     * @param errorFun {function} 操作失败之后的回调函数 输入是错误信息
+     * @param checkFun {function} 删除前的检查函数 输入是请求参数对象，如果返回的是一个false 则代表不进行删除操作
+     */
+    reName(userId, type, fileName, newName, okFun = undefined, errorFun = (e) => alert(e['res']), checkFun = undefined) {
+        if (userId === undefined || type == null || type === '' || fileName === undefined || fileName === '' || newName === undefined || newName === '') {
+            console.error("您必须要输入 userId 和 type 以及 fileName 和 newName 参数才可以进行删除")
+            return
+        }
+        const formData = new FormData();
+        // 设置请求参数
+        const params = {
+            fileName: fileName,
+            newName: newName,
+            userId: userId,
+            type: type
+        }
+        if (checkFun !== undefined && !checkFun(params)) {
+            return;
+        }
+        formData.append('params', JSON.stringify(params))
+        // 开始进行请求发送
+        axios(
+            {
+                method: 'post',
+                url: this.diskMirrorUrl + this.getController() + '/reName',
+                data: formData,
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            }
+        ).then(function (res) {
+            if (res.data['res'] !== 'ok!!!!') {
+                if (errorFun !== undefined) {
+                    errorFun(res.data)
+                }
+                return;
+            }
+            if (okFun !== undefined) {
+                okFun(res.data)
+            } else {
+                console.info(res.data)
+            }
+        }).catch(function (err) {
+            if (errorFun !== undefined) {
+                errorFun(err)
+            } else {
+                console.error(err)
+            }
+        });
+    }
 }

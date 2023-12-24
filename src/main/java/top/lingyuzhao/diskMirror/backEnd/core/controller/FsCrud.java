@@ -97,6 +97,31 @@ public class FsCrud implements CRUD {
     }
 
     /**
+     * 重命名类的函数
+     *
+     * @param httpServletRequest 请求对象
+     * @return 返回结果
+     */
+    @Override
+    public String reName(HttpServletRequest httpServletRequest) {
+        try {
+            final Part params = httpServletRequest.getPart("params");
+            if (params == null) {
+                return HttpUtils.getResJsonStr(new JSONObject(), "您的请求参数为空，请确保您的请求参数 json 字符串存储在 ”params“ 对应的请求数据包中!");
+            } else {
+                try (
+                        final InputStream inputStream = params.getInputStream()
+                ) {
+                    return adapter.reName(JSONObject.parseObject(IOUtils.getStringByStream(inputStream, SpringConfig.getOptionString(WebConf.DATA_TEXT_CHARSET)))).toString();
+                }
+            }
+        } catch (IOException | ServletException e) {
+            WebConf.LOGGER.error("remove 函数调用错误!!!", e);
+            return HttpUtils.getResJsonStr(new JSONObject(), e.toString());
+        }
+    }
+
+    /**
      * 获取相关操作的函数
      *
      * @param httpServletRequest 请求对象

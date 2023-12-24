@@ -31,6 +31,15 @@ public interface CRUD {
     String remove(HttpServletRequest httpServletRequest);
 
     /**
+     * 重命名类的函数
+     * @param httpServletRequest 请求对象
+     * @return 返回结果
+     */
+    @RequestMapping("/reName")
+    @ResponseBody
+    String reName(HttpServletRequest httpServletRequest);
+
+    /**
      * 获取相关操作的函数
      *
      * @param httpServletRequest 请求对象
