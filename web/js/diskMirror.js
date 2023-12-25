@@ -52,6 +52,7 @@ class DiskMirror {
         // 设置文件数据包
         formData.append('file', file)
         // 开始进行请求发送
+        axios.defaults.withCredentials = true;
         axios(
             {
                 method: 'post',
@@ -109,6 +110,7 @@ class DiskMirror {
         }
         formData.append('params', JSON.stringify(params))
         // 开始进行请求发送
+        axios.defaults.withCredentials = true;
         axios(
             {
                 method: 'post',
@@ -165,6 +167,7 @@ class DiskMirror {
         }
         formData.append('params', JSON.stringify(params))
         // 开始进行请求发送
+        axios.defaults.withCredentials = true;
         axios(
             {
                 method: 'post',
@@ -223,6 +226,7 @@ class DiskMirror {
         }
         formData.append('params', JSON.stringify(params))
         // 开始进行请求发送
+        axios.defaults.withCredentials = true;
         axios(
             {
                 method: 'post',

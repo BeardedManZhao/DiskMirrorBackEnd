@@ -34,7 +34,7 @@
     const elementsByName2 = document.getElementsByName("fileType")[0];
 
     // 实例化盘镜
-    const diskMirror = new DiskMirror("http://www.lingyuzhao.top/DiskMirrorBackEnd");
+    const diskMirror = new DiskMirror("http://diskmirror.lingyuzhao.top/DiskMirrorBackEnd");
 
     document.querySelector('form').addEventListener('submit', function (e) {
         e.preventDefault();

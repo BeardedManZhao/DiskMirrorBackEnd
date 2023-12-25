@@ -2,7 +2,9 @@ package top.lingyuzhao.diskMirror.backEnd.conf;
 
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import top.lingyuzhao.diskMirror.core.Adapter;
 import top.lingyuzhao.diskMirror.core.DiskMirror;
 
@@ -18,7 +20,7 @@ import top.lingyuzhao.diskMirror.core.DiskMirror;
         value = "top.lingyuzhao.diskMirror.backEnd.core.controller"
 )
 @EnableWebMvc
-public final class SpringConfig {
+public final class SpringConfig implements WebMvcConfigurer {
 
     public static final WebConf WEB_CONF = new WebConf();
     /**
@@ -26,12 +28,14 @@ public final class SpringConfig {
      */
     public static final String CHARSET = "UTF-8";
     /**
-     * 跨域允许的三个主机
+     * 跨域允许的所有主机对应的数组对象
      */
-    public static final String
-            CROSS_ARRAY_1 = "http://www.lingyuzhao.top",
-            CROSS_ARRAY_2 = "http://diskmirror.lingyuzhao.top",
-            CROSS_ARRAY_3 = "http://lsb.lingyuzhao.top";
+    public static final String[] ALL_HOST = {
+            "http://www.lingyuzhao.top/",
+            "http://diskmirror.lingyuzhao.top/",
+            "http://lsf.lingyuzhao.top/"
+    };
+
     /**
      * 操作过程中需要使用的适配器对象
      */
@@ -103,4 +107,13 @@ public final class SpringConfig {
         adapter = ((DiskMirror) getOption(WebConf.IO_MODE)).getAdapter(WEB_CONF);
     }
 
+
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOrigins(ALL_HOST)
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                .allowCredentials(true)
+                .maxAge(3600);
+    }
 }

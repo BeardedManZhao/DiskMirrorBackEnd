@@ -29,7 +29,7 @@
         src="http://diskmirror.lingyuzhao.top/webJavaScript//diskMirror.js"></script>
 <script>
     // 实例化盘镜
-    const diskMirror = new DiskMirror("http://www.lingyuzhao.top/DiskMirrorBackEnd");
+    const diskMirror = new DiskMirror("http://diskMirror.lingyuzhao.top/DiskMirrorBackEnd");
 
     function rm() {
         console.info("rm() run!!!")

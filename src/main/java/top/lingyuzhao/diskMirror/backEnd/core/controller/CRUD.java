@@ -32,6 +32,7 @@ public interface CRUD {
 
     /**
      * 重命名类的函数
+     *
      * @param httpServletRequest 请求对象
      * @return 返回结果
      */

@@ -29,7 +29,11 @@
 
 </div>
 <div>
-    <button onclick="window.open('http://www.lingyuzhao.top/js/diskMirror.js')">启动成功，点击获取 JS 文件</button>
+    <button onclick="window.open('<%=SpringConfig.getOptionString(WebConf.PROTOCOL_PREFIX)%>')">前往盘镜文件系统</button>
+    <button onclick="window.open('seeConf.jsp')">查看盘镜配置</button>
+    <button onclick="window.open('upload.jsp')">上传</button>
+    <button onclick="window.open('getUrls.jsp')">查询</button>
+    <button onclick="window.open('remove.jsp')">删除</button>
 </div>
 </body>
 </html>

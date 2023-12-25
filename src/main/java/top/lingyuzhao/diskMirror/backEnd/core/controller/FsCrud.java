@@ -4,6 +4,7 @@ import com.alibaba.fastjson2.JSONObject;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import top.lingyuzhao.diskMirror.backEnd.conf.SpringConfig;
 import top.lingyuzhao.diskMirror.backEnd.conf.WebConf;
 import top.lingyuzhao.diskMirror.backEnd.utils.HttpUtils;
@@ -25,11 +26,9 @@ import java.io.InputStream;
 @RequestMapping(
         value = "FsCrud",
         // 告知前端页面，回复数据的解析方式
-        produces = "text/html;charset=" + SpringConfig.CHARSET
+        produces = "text/html;charset=" + SpringConfig.CHARSET,
+        method = {RequestMethod.POST}
 )
-@CrossOrigin(origins = {
-        SpringConfig.CROSS_ARRAY_1, SpringConfig.CROSS_ARRAY_2, SpringConfig.CROSS_ARRAY_3
-}, allowCredentials = "true")
 public class FsCrud implements CRUD {
 
     /**
