@@ -26,12 +26,12 @@ public final class SpringConfig {
      */
     public static final String CHARSET = "UTF-8";
     /**
-     * 跨域允许主机1
+     * 跨域允许的三个主机
      */
     public static final String
-            CROSS_ARRAY_1 = "*.lingyuzhao.top",
-            CROSS_ARRAY_2 = "*.lingyuzhao.top",
-            CROSS_ARRAY_3 = "*.lingyuzhao.top";
+            CROSS_ARRAY_1 = "http://www.lingyuzhao.top",
+            CROSS_ARRAY_2 = "http://diskmirror.lingyuzhao.top",
+            CROSS_ARRAY_3 = "http://lsb.lingyuzhao.top";
     /**
      * 操作过程中需要使用的适配器对象
      */

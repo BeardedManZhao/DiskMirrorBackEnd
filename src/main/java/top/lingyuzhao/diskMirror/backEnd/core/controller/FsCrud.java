@@ -27,7 +27,7 @@ import java.io.InputStream;
         // 告知前端页面，回复数据的解析方式
         produces = "text/html;charset=" + SpringConfig.CHARSET
 )
-@CrossOrigin(value = {
+@CrossOrigin(origins = {
         SpringConfig.CROSS_ARRAY_1, SpringConfig.CROSS_ARRAY_2, SpringConfig.CROSS_ARRAY_3
 }, allowCredentials = "true")
 public class FsCrud implements CRUD {
