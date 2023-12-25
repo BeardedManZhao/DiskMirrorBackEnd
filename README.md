@@ -27,10 +27,18 @@ url，在诸多场景中可以简化IO相关的实现操作，能够降低开发
         SpringConfig.putOption(WebConf.DATA_TEXT_CHARSET, "UTF-8");
         // 配置后端的IO模式 在这里我们使用的是本地适配器 您可以选择其它适配器或自定义适配器
         SpringConfig.putOption(WebConf.IO_MODE, DiskMirror.LocalFSAdapter);
+        // 设置每个空间中每种类型的文件存储最大字节数
+        SpringConfig.putOption(WebConf.USER_DISK_MIRROR_SPACE_QUOTA, 128 << 10 << 10);
         // 设置协议前缀 需要确保你的服务器可以访问到这里！！！
         SpringConfig.putOption(WebConf.PROTOCOL_PREFIX, "http://diskmirror.lingyuzhao.top");
         // 设置后端的IO模式
         SpringConfig.putOption(WebConf.IO_MODE, DiskMirror.LocalFSAdapter);
+        // 设置允许跨域访问的主机
+        ALL_HOST = new String[]{
+                "http://www.lingyuzhao.top/",
+                "http://diskmirror.lingyuzhao.top/",
+                "http://lsf.lingyuzhao.top/"
+        };
     }
 ```
 

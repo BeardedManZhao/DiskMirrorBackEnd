@@ -30,11 +30,7 @@ public final class SpringConfig implements WebMvcConfigurer {
     /**
      * 跨域允许的所有主机对应的数组对象
      */
-    public static final String[] ALL_HOST = {
-            "http://www.lingyuzhao.top/",
-            "http://diskmirror.lingyuzhao.top/",
-            "http://lsf.lingyuzhao.top/"
-    };
+    public static final String[] ALL_HOST;
 
     /**
      * 操作过程中需要使用的适配器对象
@@ -57,6 +53,12 @@ public final class SpringConfig implements WebMvcConfigurer {
         SpringConfig.putOption(WebConf.PROTOCOL_PREFIX, "http://diskmirror.lingyuzhao.top");
         // 设置后端的IO模式
         SpringConfig.putOption(WebConf.IO_MODE, DiskMirror.LocalFSAdapter);
+        // 设置允许跨域访问的主机
+        ALL_HOST = new String[]{
+                "http://www.lingyuzhao.top/",
+                "http://diskmirror.lingyuzhao.top/",
+                "http://lsf.lingyuzhao.top/"
+        };
     }
 
     /**
