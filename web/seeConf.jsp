@@ -1,4 +1,5 @@
-<%@ page import="top.lingyuzhao.diskMirror.backEnd.conf.SpringConfig" %><%--
+<%@ page import="top.lingyuzhao.diskMirror.backEnd.conf.DiskMirrorConfig" %>
+<%@ page import="top.lingyuzhao.diskMirror.backEnd.conf.DiskMirrorConfig" %><%--
   Created by IntelliJ IDEA.
   User: zhao
   Date: 2023/12/15
@@ -15,6 +16,6 @@
 </body>
 <script rel="script" type="text/javascript" src="http://www.lingyuzhao.top/js/utils.js"></script>
 <script>
-    document.getElementById('conf_show_div').innerText = formatJson('<%=SpringConfig.WEB_CONF.toString()%>')
+    document.getElementById('conf_show_div').innerText = formatJson('<%=DiskMirrorConfig.WEB_CONF.toString()%>')
 </script>
 </html>

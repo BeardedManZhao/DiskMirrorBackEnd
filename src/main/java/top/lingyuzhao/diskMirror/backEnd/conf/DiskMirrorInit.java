@@ -12,7 +12,7 @@ import javax.servlet.Filter;
  *
  * @author zhao
  */
-public class ServletInit extends AbstractDispatcherServletInitializer {
+public class DiskMirrorInit extends AbstractDispatcherServletInitializer {
 
     /**
      * 我们需要在这里加载 SpringMVC对应的容器对象
@@ -24,7 +24,7 @@ public class ServletInit extends AbstractDispatcherServletInitializer {
         // 初始化容器对象
         final AnnotationConfigWebApplicationContext webApplicationContext = new AnnotationConfigWebApplicationContext();
         // 将配置类注册到容器对象中
-        webApplicationContext.register(SpringConfig.class);
+        webApplicationContext.register(DiskMirrorConfig.class);
         // 返回容器对象
         return webApplicationContext;
     }
@@ -60,7 +60,7 @@ public class ServletInit extends AbstractDispatcherServletInitializer {
         // 实例化字符编码过滤器
         final CharacterEncodingFilter characterEncodingFilter = new CharacterEncodingFilter();
         // 设置字符编码集
-        characterEncodingFilter.setEncoding(SpringConfig.getOption(WebConf.DATA_TEXT_CHARSET).toString());
+        characterEncodingFilter.setEncoding(DiskMirrorConfig.getOption(WebConf.DATA_TEXT_CHARSET).toString());
         // 将过滤器数组返回出去
         return new Filter[]{
                 characterEncodingFilter

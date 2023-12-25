@@ -1,4 +1,4 @@
-<%@ page import="top.lingyuzhao.diskMirror.backEnd.conf.SpringConfig" %>
+<%@ page import="top.lingyuzhao.diskMirror.backEnd.conf.DiskMirrorConfig" %>
 <%@ page import="top.lingyuzhao.diskMirror.backEnd.conf.WebConf" %><%--
   Created by IntelliJ IDEA.
   User: zhao

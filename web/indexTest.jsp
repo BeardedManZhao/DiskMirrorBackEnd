@@ -1,4 +1,4 @@
-<%@ page import="top.lingyuzhao.diskMirror.backEnd.conf.SpringConfig" %>
+<%@ page import="top.lingyuzhao.diskMirror.backEnd.conf.DiskMirrorConfig" %>
 <%@ page import="top.lingyuzhao.diskMirror.backEnd.conf.WebConf" %><%--
   Created by IntelliJ IDEA.
   User: zhao
@@ -29,7 +29,7 @@
 
 </div>
 <div>
-    <button onclick="window.open('<%=SpringConfig.getOptionString(WebConf.PROTOCOL_PREFIX)%>')">前往盘镜文件系统</button>
+    <button onclick="window.open('<%=DiskMirrorConfig.getOptionString(WebConf.PROTOCOL_PREFIX)%>')">前往盘镜文件系统</button>
     <button onclick="window.open('seeConf.jsp')">查看盘镜配置</button>
     <button onclick="window.open('upload.jsp')">上传</button>
     <button onclick="window.open('getUrls.jsp')">查询</button>

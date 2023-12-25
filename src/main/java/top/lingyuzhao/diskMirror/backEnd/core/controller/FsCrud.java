@@ -4,7 +4,7 @@ import com.alibaba.fastjson2.JSONObject;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import top.lingyuzhao.diskMirror.backEnd.conf.SpringConfig;
+import top.lingyuzhao.diskMirror.backEnd.conf.DiskMirrorConfig;
 import top.lingyuzhao.diskMirror.backEnd.conf.WebConf;
 import top.lingyuzhao.diskMirror.backEnd.utils.HttpUtils;
 import top.lingyuzhao.diskMirror.core.Adapter;
@@ -25,7 +25,7 @@ import java.io.InputStream;
 @RequestMapping(
         value = "FsCrud",
         // 告知前端页面，回复数据的解析方式
-        produces = "text/html;charset=" + SpringConfig.CHARSET,
+        produces = "text/html;charset=" + DiskMirrorConfig.CHARSET,
         method = {RequestMethod.POST}
 )
 public class FsCrud implements CRUD {
@@ -33,7 +33,7 @@ public class FsCrud implements CRUD {
     /**
      * 从配置类中获取到适配器对象
      */
-    final Adapter adapter = SpringConfig.getAdapter();
+    final Adapter adapter = DiskMirrorConfig.getAdapter();
 
     /**
      * 增加函数
@@ -61,7 +61,7 @@ public class FsCrud implements CRUD {
                     final InputStream inputStream0 = params.getInputStream();
                     final InputStream inputStream1 = file.getInputStream()
             ) {
-                return adapter.upload(inputStream1, JSONObject.parseObject(IOUtils.getStringByStream(inputStream0, SpringConfig.getOptionString(WebConf.DATA_TEXT_CHARSET)))).toString();
+                return adapter.upload(inputStream1, JSONObject.parseObject(IOUtils.getStringByStream(inputStream0, DiskMirrorConfig.getOptionString(WebConf.DATA_TEXT_CHARSET)))).toString();
             }
         } catch (IOException | RuntimeException | ServletException e) {
             WebConf.LOGGER.error("add 函数调用错误!!!", e);
@@ -85,7 +85,7 @@ public class FsCrud implements CRUD {
                 try (
                         final InputStream inputStream = params.getInputStream()
                 ) {
-                    return adapter.remove(JSONObject.parseObject(IOUtils.getStringByStream(inputStream, SpringConfig.getOptionString(WebConf.DATA_TEXT_CHARSET)))).toString();
+                    return adapter.remove(JSONObject.parseObject(IOUtils.getStringByStream(inputStream, DiskMirrorConfig.getOptionString(WebConf.DATA_TEXT_CHARSET)))).toString();
                 }
             }
         } catch (IOException | ServletException e) {
@@ -110,7 +110,7 @@ public class FsCrud implements CRUD {
                 try (
                         final InputStream inputStream = params.getInputStream()
                 ) {
-                    return adapter.reName(JSONObject.parseObject(IOUtils.getStringByStream(inputStream, SpringConfig.getOptionString(WebConf.DATA_TEXT_CHARSET)))).toString();
+                    return adapter.reName(JSONObject.parseObject(IOUtils.getStringByStream(inputStream, DiskMirrorConfig.getOptionString(WebConf.DATA_TEXT_CHARSET)))).toString();
                 }
             }
         } catch (IOException | ServletException e) {
@@ -135,7 +135,7 @@ public class FsCrud implements CRUD {
                 try (
                         final InputStream inputStream = params.getInputStream()
                 ) {
-                    return adapter.getUrls(JSONObject.parseObject(IOUtils.getStringByStream(inputStream, SpringConfig.getOptionString(WebConf.DATA_TEXT_CHARSET)))).toString();
+                    return adapter.getUrls(JSONObject.parseObject(IOUtils.getStringByStream(inputStream, DiskMirrorConfig.getOptionString(WebConf.DATA_TEXT_CHARSET)))).toString();
                 }
             }
         } catch (IOException | ServletException e) {

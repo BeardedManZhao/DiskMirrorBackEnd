@@ -1,5 +1,6 @@
 package top.lingyuzhao.diskMirror.backEnd.conf;
 
+import com.sun.istack.internal.logging.Logger;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -7,6 +8,8 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import top.lingyuzhao.diskMirror.core.Adapter;
 import top.lingyuzhao.diskMirror.core.DiskMirror;
+
+import java.util.Arrays;
 
 /**
  * Spring mvc 的配置类
@@ -20,7 +23,9 @@ import top.lingyuzhao.diskMirror.core.DiskMirror;
         value = "top.lingyuzhao.diskMirror.backEnd.core.controller"
 )
 @EnableWebMvc
-public final class SpringConfig implements WebMvcConfigurer {
+public final class DiskMirrorConfig implements WebMvcConfigurer {
+
+    Logger logger = Logger.getLogger(DiskMirrorConfig.class);
 
     public static final WebConf WEB_CONF = new WebConf();
     /**
@@ -28,9 +33,15 @@ public final class SpringConfig implements WebMvcConfigurer {
      */
     public static final String CHARSET = "UTF-8";
     /**
+     * TODO 需要配置
      * 跨域允许的所有主机对应的数组对象
+     * 设置允许跨域访问的主机
      */
-    public static final String[] ALL_HOST;
+    public static final String[] ALL_HOST = new String[]{
+            "http://www.lingyuzhao.top/",
+            "http://www.lingyuzhao.top",
+            "http://diskmirror.lingyuzhao.top/"
+    };
 
     /**
      * 操作过程中需要使用的适配器对象
@@ -39,26 +50,21 @@ public final class SpringConfig implements WebMvcConfigurer {
 
     /*
      * 静态代码块 用于初始化一些配置
+     * TODO 需要配置
      */
     static {
         // 配置需要被 盘镜 管理的路径 此路径也应该可以被 web 后端服务器访问到
-        SpringConfig.putOption(WebConf.ROOT_DIR, "/DiskMirror/data");
+        DiskMirrorConfig.putOption(WebConf.ROOT_DIR, "/DiskMirror/data");
         // 配置一切需要被盘镜处理的数据的编码
-        SpringConfig.putOption(WebConf.DATA_TEXT_CHARSET, "UTF-8");
+        DiskMirrorConfig.putOption(WebConf.DATA_TEXT_CHARSET, "UTF-8");
         // 配置后端的IO模式 在这里我们使用的是本地适配器 您可以选择其它适配器或自定义适配器
-        SpringConfig.putOption(WebConf.IO_MODE, DiskMirror.LocalFSAdapter);
+        DiskMirrorConfig.putOption(WebConf.IO_MODE, DiskMirror.LocalFSAdapter);
         // 设置每个空间中每种类型的文件存储最大字节数
-        SpringConfig.putOption(WebConf.USER_DISK_MIRROR_SPACE_QUOTA, 128 << 10 << 10);
+        DiskMirrorConfig.putOption(WebConf.USER_DISK_MIRROR_SPACE_QUOTA, 128 << 10 << 10);
         // 设置协议前缀 需要确保你的服务器可以访问到这里！！！
-        SpringConfig.putOption(WebConf.PROTOCOL_PREFIX, "http://diskmirror.lingyuzhao.top");
+        DiskMirrorConfig.putOption(WebConf.PROTOCOL_PREFIX, "http://diskmirror.lingyuzhao.top");
         // 设置后端的IO模式
-        SpringConfig.putOption(WebConf.IO_MODE, DiskMirror.LocalFSAdapter);
-        // 设置允许跨域访问的主机
-        ALL_HOST = new String[]{
-                "http://www.lingyuzhao.top/",
-                "http://diskmirror.lingyuzhao.top/",
-                "http://lsf.lingyuzhao.top/"
-        };
+        DiskMirrorConfig.putOption(WebConf.IO_MODE, DiskMirror.LocalFSAdapter);
     }
 
     /**
@@ -112,7 +118,9 @@ public final class SpringConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
+        logger.info("盘镜 后端启动，允许跨域列表：" + Arrays.toString(ALL_HOST));
         registry.addMapping("/**")
+                .allowedHeaders("*")
                 .allowedOrigins(ALL_HOST)
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowCredentials(true)

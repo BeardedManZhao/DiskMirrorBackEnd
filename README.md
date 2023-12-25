@@ -13,7 +13,7 @@ url，在诸多场景中可以简化IO相关的实现操作，能够降低开发
 
 #### 下载并修改源码
 
-您需要下载我们的后端系统源码包，并在 `top.lingyuzhao.diskMirror.backEnd.conf.SpringConfig`
+您需要下载我们的后端系统源码包，并在 `top.lingyuzhao.diskMirror.backEnd.conf.DiskMirrorConfig`
 类中去进行一些配置，下面就是需要被配置的代码块，您可以在类中找到下面的代码块，并在这里进行配置项目的设置或您自己任意的配置初始化行为 。
 
 ```

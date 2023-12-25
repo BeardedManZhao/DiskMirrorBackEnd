@@ -1,7 +1,7 @@
 package top.lingyuzhao.diskMirror.backEnd.utils;
 
 import com.alibaba.fastjson2.JSONObject;
-import top.lingyuzhao.diskMirror.backEnd.conf.SpringConfig;
+import top.lingyuzhao.diskMirror.backEnd.conf.DiskMirrorConfig;
 import top.lingyuzhao.diskMirror.backEnd.conf.WebConf;
 import zhao.utils.StrUtils;
 
@@ -34,7 +34,7 @@ public final class HttpUtils {
      * @return json的字符串
      */
     public static JSONObject getResJson(JSONObject jsonObject, Object resReturnOkValue) {
-        jsonObject.put(SpringConfig.getOptionString(WebConf.RES_KEY), resReturnOkValue);
+        jsonObject.put(DiskMirrorConfig.getOptionString(WebConf.RES_KEY), resReturnOkValue);
         return jsonObject;
     }
 
