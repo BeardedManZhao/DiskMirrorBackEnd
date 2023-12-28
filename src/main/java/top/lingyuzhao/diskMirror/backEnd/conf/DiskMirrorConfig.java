@@ -1,5 +1,6 @@
 package top.lingyuzhao.diskMirror.backEnd.conf;
 
+import com.alibaba.fastjson2.JSONArray;
 import com.sun.istack.internal.logging.Logger;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.annotation.ComponentScan;
@@ -25,8 +26,6 @@ import java.util.Arrays;
 @EnableWebMvc
 public final class DiskMirrorConfig implements WebMvcConfigurer {
 
-    Logger logger = Logger.getLogger(DiskMirrorConfig.class);
-
     public static final WebConf WEB_CONF = new WebConf();
     /**
      * 回复页面要使用的字符集
@@ -37,7 +36,6 @@ public final class DiskMirrorConfig implements WebMvcConfigurer {
      * 设置允许跨域访问的主机
      */
     public static final String[] ALL_HOST;
-
     /**
      * 操作过程中需要使用的适配器对象
      */
@@ -62,11 +60,13 @@ public final class DiskMirrorConfig implements WebMvcConfigurer {
         DiskMirrorConfig.putOption(WebConf.IO_MODE, DiskMirror.LocalFSAdapter);
         // 设置后端的允许跨域的所有主机
         ALL_HOST = new String[]{
-                "http://www.lingyuzhao.top/",
                 "http://www.lingyuzhao.top",
-                "http://diskmirror.lingyuzhao.top/"
+                "http://www.lingyuzhao.top/"
         };
+        DiskMirrorConfig.putOption(WebConf.ALL_HOST_CONTROL, JSONArray.from(ALL_HOST));
     }
+
+    Logger logger = Logger.getLogger(DiskMirrorConfig.class);
 
     /**
      * 手动修改并设置一些配置

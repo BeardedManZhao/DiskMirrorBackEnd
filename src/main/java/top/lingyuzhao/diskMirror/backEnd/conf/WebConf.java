@@ -16,6 +16,10 @@ public final class WebConf extends Config {
      * 盘镜 的 处理模式设置
      */
     public static final String IO_MODE = "diskMirror.mode";
+    /**
+     * 盘镜后端跨域列表
+     */
+    public static final String ALL_HOST_CONTROL = "all.host.control";
 
     /**
      * 日志控制器

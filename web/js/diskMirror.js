@@ -93,7 +93,7 @@ class DiskMirror {
      * @param errorFun {function} 操作失败之后的回调函数 输入是错误信息
      * @param checkFun {function} 获取前的检查函数 输入是请求参数对象，如果返回的是一个false 则代表不进行获取操作
      */
-    getUrls(userId, type, okFun = undefined,  errorFun = (e) => 'res' in e ? alert(e['res']) : alert(e), checkFun = undefined) {
+    getUrls(userId, type, okFun = undefined, errorFun = (e) => 'res' in e ? alert(e['res']) : alert(e), checkFun = undefined) {
         // getUrls function body
         if (userId === undefined || type === undefined || type === '') {
             console.error("您必须要输入 userId 以及 type 参数才可以进行 url 的获取")
@@ -150,7 +150,7 @@ class DiskMirror {
      * @param errorFun {function} 操作失败之后的回调函数 输入是错误信息
      * @param checkFun {function} 删除前的检查函数 输入是请求参数对象，如果返回的是一个false 则代表不进行删除操作
      */
-    remove(userId, type, fileName, okFun = undefined,  errorFun = (e) => 'res' in e ? alert(e['res']) : alert(e), checkFun = undefined) {
+    remove(userId, type, fileName, okFun = undefined, errorFun = (e) => 'res' in e ? alert(e['res']) : alert(e), checkFun = undefined) {
         if (userId === undefined || type == null || type === '' || fileName === undefined || fileName === '') {
             console.error("您必须要输入 userId 以及 type 和 fileName 参数才可以进行删除")
             return
@@ -208,7 +208,7 @@ class DiskMirror {
      * @param errorFun {function} 操作失败之后的回调函数 输入是错误信息
      * @param checkFun {function} 删除前的检查函数 输入是请求参数对象，如果返回的是一个false 则代表不进行删除操作
      */
-    reName(userId, type, fileName, newName, okFun = undefined,  errorFun = (e) => 'res' in e ? alert(e['res']) : alert(e), checkFun = undefined) {
+    reName(userId, type, fileName, newName, okFun = undefined, errorFun = (e) => 'res' in e ? alert(e['res']) : alert(e), checkFun = undefined) {
         if (userId === undefined || type == null || type === '' || fileName === undefined || fileName === '' || newName === undefined || newName === '') {
             console.error("您必须要输入 userId 和 type 以及 fileName 和 newName 参数才可以进行删除")
             return
