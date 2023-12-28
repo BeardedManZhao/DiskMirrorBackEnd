@@ -33,15 +33,10 @@ public final class DiskMirrorConfig implements WebMvcConfigurer {
      */
     public static final String CHARSET = "UTF-8";
     /**
-     * TODO 需要配置
      * 跨域允许的所有主机对应的数组对象
      * 设置允许跨域访问的主机
      */
-    public static final String[] ALL_HOST = new String[]{
-            "http://www.lingyuzhao.top/",
-            "http://www.lingyuzhao.top",
-            "http://diskmirror.lingyuzhao.top/"
-    };
+    public static final String[] ALL_HOST;
 
     /**
      * 操作过程中需要使用的适配器对象
@@ -65,6 +60,12 @@ public final class DiskMirrorConfig implements WebMvcConfigurer {
         DiskMirrorConfig.putOption(WebConf.PROTOCOL_PREFIX, "http://diskmirror.lingyuzhao.top");
         // 设置后端的IO模式
         DiskMirrorConfig.putOption(WebConf.IO_MODE, DiskMirror.LocalFSAdapter);
+        // 设置后端的允许跨域的所有主机
+        ALL_HOST = new String[]{
+                "http://www.lingyuzhao.top/",
+                "http://www.lingyuzhao.top",
+                "http://diskmirror.lingyuzhao.top/"
+        };
     }
 
     /**
