@@ -96,7 +96,12 @@ class DiskMirror {
     getUrls(userId, type, okFun = undefined, errorFun = (e) => 'res' in e ? alert(e['res']) : alert(e), checkFun = undefined) {
         // getUrls function body
         if (userId === undefined || type === undefined || type === '') {
-            console.error("您必须要输入 userId 以及 type 参数才可以进行 url 的获取")
+            const err = "您必须要输入 userId 以及 type 参数才可以进行 url 的获取";
+            if (errorFun !== undefined) {
+                errorFun(err)
+            } else {
+                console.error(err)
+            }
             return
         }
         const formData = new FormData();
@@ -152,7 +157,12 @@ class DiskMirror {
      */
     remove(userId, type, fileName, okFun = undefined, errorFun = (e) => 'res' in e ? alert(e['res']) : alert(e), checkFun = undefined) {
         if (userId === undefined || type == null || type === '' || fileName === undefined || fileName === '') {
-            console.error("您必须要输入 userId 以及 type 和 fileName 参数才可以进行删除")
+            const err = "您必须要输入 userId 以及 type 和 fileName 参数才可以进行删除";
+            if (errorFun !== undefined) {
+                errorFun(err)
+            } else {
+                console.error(err)
+            }
             return
         }
         const formData = new FormData();
@@ -210,8 +220,17 @@ class DiskMirror {
      */
     reName(userId, type, fileName, newName, okFun = undefined, errorFun = (e) => 'res' in e ? alert(e['res']) : alert(e), checkFun = undefined) {
         if (userId === undefined || type == null || type === '' || fileName === undefined || fileName === '' || newName === undefined || newName === '') {
-            console.error("您必须要输入 userId 和 type 以及 fileName 和 newName 参数才可以进行删除")
+            const err = "您必须要输入 userId 和 type 以及 fileName 和 newName 参数才可以进行删除"
+            if (errorFun !== undefined) {
+                errorFun(err)
+            } else {
+                console.error(err)
+            }
             return
+        }
+        if (newName.includes("/")) {
+            const strings = newName.split("/");
+            newName = strings[strings.length - 1];
         }
         const formData = new FormData();
         // 设置请求参数

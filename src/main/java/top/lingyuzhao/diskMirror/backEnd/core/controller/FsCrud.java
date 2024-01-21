@@ -8,7 +8,7 @@ import top.lingyuzhao.diskMirror.backEnd.conf.DiskMirrorConfig;
 import top.lingyuzhao.diskMirror.backEnd.conf.WebConf;
 import top.lingyuzhao.diskMirror.backEnd.utils.HttpUtils;
 import top.lingyuzhao.diskMirror.core.Adapter;
-import zhao.utils.IOUtils;
+import top.lingyuzhao.utils.IOUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;

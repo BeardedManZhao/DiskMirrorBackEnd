@@ -3,7 +3,7 @@ package top.lingyuzhao.diskMirror.backEnd.utils;
 import com.alibaba.fastjson2.JSONObject;
 import top.lingyuzhao.diskMirror.backEnd.conf.DiskMirrorConfig;
 import top.lingyuzhao.diskMirror.backEnd.conf.WebConf;
-import zhao.utils.StrUtils;
+import top.lingyuzhao.utils.StrUtils;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
