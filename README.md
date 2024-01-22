@@ -19,26 +19,29 @@ url，在诸多场景中可以简化IO相关的实现操作，能够降低开发
 ```
     /*
      * 静态代码块 用于初始化一些配置
+     * TODO 需要配置
      */
     static {
         // 配置需要被 盘镜 管理的路径 此路径也应该可以被 web 后端服务器访问到
-        SpringConfig.putOption(WebConf.ROOT_DIR, "/DiskMirror/data");
+        DiskMirrorConfig.putOption(WebConf.ROOT_DIR, "/DiskMirror/data");
         // 配置一切需要被盘镜处理的数据的编码
-        SpringConfig.putOption(WebConf.DATA_TEXT_CHARSET, "UTF-8");
+        DiskMirrorConfig.putOption(WebConf.DATA_TEXT_CHARSET, "UTF-8");
         // 配置后端的IO模式 在这里我们使用的是本地适配器 您可以选择其它适配器或自定义适配器
-        SpringConfig.putOption(WebConf.IO_MODE, DiskMirror.LocalFSAdapter);
+        DiskMirrorConfig.putOption(WebConf.IO_MODE, DiskMirror.LocalFSAdapter);
         // 设置每个空间中每种类型的文件存储最大字节数
-        SpringConfig.putOption(WebConf.USER_DISK_MIRROR_SPACE_QUOTA, 128 << 10 << 10);
+        DiskMirrorConfig.putOption(WebConf.USER_DISK_MIRROR_SPACE_QUOTA, 128 << 10 << 10);
         // 设置协议前缀 需要确保你的服务器可以访问到这里！！！
-        SpringConfig.putOption(WebConf.PROTOCOL_PREFIX, "http://diskmirror.lingyuzhao.top");
-        // 设置后端的IO模式
-        SpringConfig.putOption(WebConf.IO_MODE, DiskMirror.LocalFSAdapter);
-        // 设置允许跨域访问的主机
+        DiskMirrorConfig.putOption(WebConf.PROTOCOL_PREFIX, "http://diskmirror.lingyuzhao.top");
+        // 设置后端的允许跨域的所有主机
         ALL_HOST = new String[]{
-                "http://www.lingyuzhao.top/",
-                "http://diskmirror.lingyuzhao.top/",
-                "http://lsf.lingyuzhao.top/"
+                "http://www.lingyuzhao.top",
+                "http://www.lingyuzhao.top/"
         };
+        DiskMirrorConfig.putOption(WebConf.ALL_HOST_CONTROL, JSONArray.from(ALL_HOST));
+        // 设置访问 diskMirror 时的密钥
+        DiskMirrorConfig.WEB_CONF.setSecureKey("diskMirror-BackEnd");
+        // 设置后端的IO模式 请确保这个是最后一个配置项目 因为在配置了此项目之后 就会构建适配器
+        DiskMirrorConfig.putOption(WebConf.IO_MODE, DiskMirror.LocalFSAdapter);
     }
 ```
 

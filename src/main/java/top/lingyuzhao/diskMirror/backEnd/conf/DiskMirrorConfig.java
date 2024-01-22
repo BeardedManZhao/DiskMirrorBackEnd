@@ -40,6 +40,7 @@ public final class DiskMirrorConfig implements WebMvcConfigurer {
      * 操作过程中需要使用的适配器对象
      */
     public static Adapter adapter;
+    public static Logger logger = Logger.getLogger(DiskMirrorConfig.class);
 
     /*
      * 静态代码块 用于初始化一些配置
@@ -50,24 +51,21 @@ public final class DiskMirrorConfig implements WebMvcConfigurer {
         DiskMirrorConfig.putOption(WebConf.ROOT_DIR, "/DiskMirror/data");
         // 配置一切需要被盘镜处理的数据的编码
         DiskMirrorConfig.putOption(WebConf.DATA_TEXT_CHARSET, "UTF-8");
-        // 配置后端的IO模式 在这里我们使用的是本地适配器 您可以选择其它适配器或自定义适配器
-        DiskMirrorConfig.putOption(WebConf.IO_MODE, DiskMirror.LocalFSAdapter);
         // 设置每个空间中每种类型的文件存储最大字节数
         DiskMirrorConfig.putOption(WebConf.USER_DISK_MIRROR_SPACE_QUOTA, 128 << 10 << 10);
         // 设置协议前缀 需要确保你的服务器可以访问到这里！！！
         DiskMirrorConfig.putOption(WebConf.PROTOCOL_PREFIX, "http://diskmirror.lingyuzhao.top");
-        // 设置后端的IO模式
-        DiskMirrorConfig.putOption(WebConf.IO_MODE, DiskMirror.LocalFSAdapter);
         // 设置后端的允许跨域的所有主机
         ALL_HOST = new String[]{
-                "*"
+                "http://www.lingyuzhao.top",
+                "http://www.lingyuzhao.top/"
         };
         DiskMirrorConfig.putOption(WebConf.ALL_HOST_CONTROL, JSONArray.from(ALL_HOST));
-        // 设置访问时的密钥
+        // 设置访问 diskMirror 时的密钥
         DiskMirrorConfig.putOption(WebConf.SECURE_KEY, "diskMirror");
+        // 设置后端的IO模式 请确保这个是最后一个配置项目 因为在配置了此项目之后 就会构建适配器
+        DiskMirrorConfig.putOption(WebConf.IO_MODE, DiskMirror.LocalFSAdapter);
     }
-
-    Logger logger = Logger.getLogger(DiskMirrorConfig.class);
 
     /**
      * 手动修改并设置一些配置
@@ -78,8 +76,13 @@ public final class DiskMirrorConfig implements WebMvcConfigurer {
     public static void putOption(String key, Object value) {
         WEB_CONF.put(key, value);
         // 现在参数少，未来参数多了需要换成 switch
-        if (WebConf.IO_MODE.equals(key)) {
-            reload();
+        switch (key) {
+            case WebConf.SECURE_KEY:
+                WEB_CONF.setSecureKey(value);
+                break;
+            case WebConf.IO_MODE:
+                reload();
+                break;
         }
     }
 
@@ -114,13 +117,16 @@ public final class DiskMirrorConfig implements WebMvcConfigurer {
      * 重新刷新配置 使其生效 此操作常用于刷新适配器等参数
      */
     public static void reload() {
-        adapter = ((DiskMirror) getOption(WebConf.IO_MODE)).getAdapter(WEB_CONF);
+        final DiskMirror diskMirror = (DiskMirror) getOption(WebConf.IO_MODE);
+        logger.info("diskMirror 构建适配器:" + diskMirror.toString() + "\n" + diskMirror.getVersion());
+        adapter = diskMirror.getAdapter(WEB_CONF);
     }
 
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         logger.info("盘镜 后端启动，允许跨域列表：" + Arrays.toString(ALL_HOST));
+        logger.info("盘镜 后端加载配置，安全密钥：" + WEB_CONF.getSecureKey());
         registry.addMapping("/**")
                 .allowedHeaders("*")
                 .allowedOrigins(ALL_HOST)

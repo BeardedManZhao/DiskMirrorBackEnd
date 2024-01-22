@@ -88,7 +88,7 @@ public class FsCrud implements CRUD {
                     return adapter.remove(JSONObject.parseObject(IOUtils.getStringByStream(inputStream, DiskMirrorConfig.getOptionString(WebConf.DATA_TEXT_CHARSET)))).toString();
                 }
             }
-        } catch (IOException | ServletException e) {
+        } catch (IOException | RuntimeException | ServletException e) {
             WebConf.LOGGER.error("remove 函数调用错误!!!", e);
             return HttpUtils.getResJsonStr(new JSONObject(), e.toString());
         }
@@ -113,7 +113,7 @@ public class FsCrud implements CRUD {
                     return adapter.reName(JSONObject.parseObject(IOUtils.getStringByStream(inputStream, DiskMirrorConfig.getOptionString(WebConf.DATA_TEXT_CHARSET)))).toString();
                 }
             }
-        } catch (IOException | ServletException e) {
+        } catch (IOException | RuntimeException | ServletException e) {
             WebConf.LOGGER.error("remove 函数调用错误!!!", e);
             return HttpUtils.getResJsonStr(new JSONObject(), e.toString());
         }
@@ -138,7 +138,7 @@ public class FsCrud implements CRUD {
                     return adapter.getUrls(JSONObject.parseObject(IOUtils.getStringByStream(inputStream, DiskMirrorConfig.getOptionString(WebConf.DATA_TEXT_CHARSET)))).toString();
                 }
             }
-        } catch (IOException | ServletException e) {
+        } catch (IOException | RuntimeException | ServletException e) {
             WebConf.LOGGER.error("add 函数调用错误!!!", e);
             return HttpUtils.getResJsonStr(new JSONObject(), e.toString());
         }
