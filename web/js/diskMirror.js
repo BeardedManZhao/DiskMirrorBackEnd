@@ -35,7 +35,7 @@ class DiskMirror {
      * 设置本组件使用的盘镜的 安全key
      * @param key {int} 此key 用于标识您的身份，让服务器相信您，且允许您访问，需要设置与服务器相同
      */
-    setSk(key = 0){
+    setSk(key = 0) {
         this.sk = key;
     }
 
@@ -65,9 +65,8 @@ class DiskMirror {
         }
         const formData = new FormData();
         // 设置请求参数数据包
-        const jsonObj = JSON.stringify(params);
-        jsonObj["secure.key"] = this.getSk();
-        formData.append('params', jsonObj);
+        params["secure.key"] = this.getSk();
+        formData.append('params', JSON.stringify(params));
         // 设置文件数据包
         formData.append('file', file)
         // 开始进行请求发送
@@ -175,7 +174,7 @@ class DiskMirror {
      * @param errorFun {function} 操作失败之后的回调函数 输入是错误信息
      * @param checkFun {function} 删除前的检查函数 输入是请求参数对象，如果返回的是一个false 则代表不进行删除操作
      */
-    remove(userId, type, fileName, okFun = undefined, errorFun = (e) => 'res' in e ? alert(e['res']) : alert(e), checkFun = undefined, ) {
+    remove(userId, type, fileName, okFun = undefined, errorFun = (e) => 'res' in e ? alert(e['res']) : alert(e), checkFun = undefined,) {
         if (userId === undefined || type == null || type === '' || fileName === undefined || fileName === '') {
             const err = "您必须要输入 userId 以及 type 和 fileName 参数才可以进行删除";
             if (errorFun !== undefined) {
@@ -248,10 +247,6 @@ class DiskMirror {
                 console.error(err)
             }
             return
-        }
-        if (newName.includes("/")) {
-            const strings = newName.split("/");
-            newName = strings[strings.length - 1];
         }
         const formData = new FormData();
         // 设置请求参数
