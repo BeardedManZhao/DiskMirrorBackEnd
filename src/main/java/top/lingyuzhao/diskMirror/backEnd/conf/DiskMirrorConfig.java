@@ -60,10 +60,11 @@ public final class DiskMirrorConfig implements WebMvcConfigurer {
         DiskMirrorConfig.putOption(WebConf.IO_MODE, DiskMirror.LocalFSAdapter);
         // 设置后端的允许跨域的所有主机
         ALL_HOST = new String[]{
-                "http://www.lingyuzhao.top",
-                "http://www.lingyuzhao.top/"
+                "*"
         };
         DiskMirrorConfig.putOption(WebConf.ALL_HOST_CONTROL, JSONArray.from(ALL_HOST));
+        // 设置访问时的密钥
+        DiskMirrorConfig.putOption(WebConf.SECURE_KEY, "diskMirror");
     }
 
     Logger logger = Logger.getLogger(DiskMirrorConfig.class);
