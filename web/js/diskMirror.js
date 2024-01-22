@@ -11,6 +11,7 @@ class DiskMirror {
     constructor(url) {
         // constructor body
         this.diskMirrorUrl = url; // This is the diskMirrorUrl variable
+        this.setSk()
         this.setController('/FsCrud')
     }
 
@@ -31,6 +32,22 @@ class DiskMirror {
     }
 
     /**
+     * 设置本组件使用的盘镜的 安全key
+     * @param key {int} 此key 用于标识您的身份，让服务器相信您，且允许您访问，需要设置与服务器相同
+     */
+    setSk(key = 0){
+        this.sk = key;
+    }
+
+    /**
+     * 获取本组件使用的盘镜的 安全key
+     * @return {int} 安全密钥 如果目标 diskMirror 服务器需要密钥访问，则您需要在这里设置密钥
+     */
+    getSk() {
+        return this.sk;
+    }
+
+    /**
      * 向后端中上传一个文件
      * @param params {{
      *      fileName: string,
@@ -41,16 +58,15 @@ class DiskMirror {
      * @param okFun {function} 操作成功之后的回调函数 输入是被上传文件的json对象
      * @param errorFun {function} 操作失败之后的回调函数 输入是错误信息
      * @param checkFun {function} 上传前的检查函数 输入是上传的文件对象的 json 数据 以及 文件对象本身，如果返回的是一个false 则代表不进行上传操作
-     * @param secureKey {int} 安全密钥 如果目标 diskMirror 服务器需要密钥访问，则您需要在这里设置密钥
      */
-    upload(params, file, okFun = undefined, errorFun = (e) => 'res' in e ? alert(e['res']) : alert(e), checkFun = undefined, secureKey = 0) {
+    upload(params, file, okFun = undefined, errorFun = (e) => 'res' in e ? alert(e['res']) : alert(e), checkFun = undefined) {
         if (checkFun !== undefined && !checkFun(params, file)) {
             return;
         }
         const formData = new FormData();
         // 设置请求参数数据包
         const jsonObj = JSON.stringify(params);
-        jsonObj["secure.key"] = secureKey;
+        jsonObj["secure.key"] = this.getSk();
         formData.append('params', jsonObj);
         // 设置文件数据包
         formData.append('file', file)
@@ -95,9 +111,8 @@ class DiskMirror {
      * @param okFun {function} 操作成功之后的回调函数 输入是被获取额结果文件的json对象
      * @param errorFun {function} 操作失败之后的回调函数 输入是错误信息
      * @param checkFun {function} 获取前的检查函数 输入是请求参数对象，如果返回的是一个false 则代表不进行获取操作
-     * @param secureKey {int} 安全密钥 如果目标 diskMirror 服务器需要密钥访问，则您需要在这里设置密钥
      */
-    getUrls(userId, type, okFun = undefined, errorFun = (e) => 'res' in e ? alert(e['res']) : alert(e), checkFun = undefined, secureKey = 0) {
+    getUrls(userId, type, okFun = undefined, errorFun = (e) => 'res' in e ? alert(e['res']) : alert(e), checkFun = undefined,) {
         // getUrls function body
         if (userId === undefined || type === undefined || type === '') {
             const err = "您必须要输入 userId 以及 type 参数才可以进行 url 的获取";
@@ -113,7 +128,7 @@ class DiskMirror {
         const params = {
             userId: userId,
             type: type,
-            "secure.key": secureKey
+            "secure.key": this.getSk()
         }
         if (checkFun !== undefined && !checkFun(params)) {
             return;
@@ -159,9 +174,8 @@ class DiskMirror {
      * @param okFun {function} 操作成功之后的回调函数 输入是被删除的文件的json对象
      * @param errorFun {function} 操作失败之后的回调函数 输入是错误信息
      * @param checkFun {function} 删除前的检查函数 输入是请求参数对象，如果返回的是一个false 则代表不进行删除操作
-     * @param secureKey {int} 安全密钥 如果目标 diskMirror 服务器需要密钥访问，则您需要在这里设置密钥
      */
-    remove(userId, type, fileName, okFun = undefined, errorFun = (e) => 'res' in e ? alert(e['res']) : alert(e), checkFun = undefined, secureKey = 0) {
+    remove(userId, type, fileName, okFun = undefined, errorFun = (e) => 'res' in e ? alert(e['res']) : alert(e), checkFun = undefined, ) {
         if (userId === undefined || type == null || type === '' || fileName === undefined || fileName === '') {
             const err = "您必须要输入 userId 以及 type 和 fileName 参数才可以进行删除";
             if (errorFun !== undefined) {
@@ -177,7 +191,7 @@ class DiskMirror {
             fileName: fileName,
             userId: userId,
             type: type,
-            "secure.key": secureKey
+            "secure.key": this.getSk()
         }
         if (checkFun !== undefined && !checkFun(params)) {
             return;
@@ -224,9 +238,8 @@ class DiskMirror {
      * @param okFun {function} 操作成功之后的回调函数 输入是被删除的文件的json对象
      * @param errorFun {function} 操作失败之后的回调函数 输入是错误信息
      * @param checkFun {function} 删除前的检查函数 输入是请求参数对象，如果返回的是一个false 则代表不进行删除操作
-     * @param secureKey {int} 安全密钥 如果目标 diskMirror 服务器需要密钥访问，则您需要在这里设置密钥
      */
-    reName(userId, type, fileName, newName, okFun = undefined, errorFun = (e) => 'res' in e ? alert(e['res']) : alert(e), checkFun = undefined, secureKey = 0) {
+    reName(userId, type, fileName, newName, okFun = undefined, errorFun = (e) => 'res' in e ? alert(e['res']) : alert(e), checkFun = undefined) {
         if (userId === undefined || type == null || type === '' || fileName === undefined || fileName === '' || newName === undefined || newName === '') {
             const err = "您必须要输入 userId 和 type 以及 fileName 和 newName 参数才可以进行删除"
             if (errorFun !== undefined) {
@@ -247,7 +260,7 @@ class DiskMirror {
             newName: newName,
             userId: userId,
             type: type,
-            "secure.key": secureKey
+            "secure.key": this.getSk()
         }
         if (checkFun !== undefined && !checkFun(params)) {
             return;
