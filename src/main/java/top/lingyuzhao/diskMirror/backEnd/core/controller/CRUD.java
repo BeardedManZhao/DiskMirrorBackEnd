@@ -49,4 +49,13 @@ public interface CRUD {
     @RequestMapping("/getUrls")
     @ResponseBody
     String get(HttpServletRequest httpServletRequest);
+
+    /**
+     * 创建一个文件目录的后端处理函数
+     * @param httpServletRequest 来自前端的请求对象
+     * @return 操作成功之后的返回结果
+     */
+    @RequestMapping("/mkdirs")
+    @ResponseBody
+    String mkdirs(HttpServletRequest httpServletRequest);
 }

@@ -236,11 +236,11 @@ class DiskMirror {
      * @param newName {string} 变更之后的文件名称
      * @param okFun {function} 操作成功之后的回调函数 输入是被删除的文件的json对象
      * @param errorFun {function} 操作失败之后的回调函数 输入是错误信息
-     * @param checkFun {function} 删除前的检查函数 输入是请求参数对象，如果返回的是一个false 则代表不进行删除操作
+     * @param checkFun {function} 操作前的检查函数 输入是请求参数对象，如果返回的是一个false 则代表检查失败不继续操作
      */
     reName(userId, type, fileName, newName, okFun = undefined, errorFun = (e) => 'res' in e ? alert(e['res']) : alert(e), checkFun = undefined) {
         if (userId === undefined || type == null || type === '' || fileName === undefined || fileName === '' || newName === undefined || newName === '') {
-            const err = "您必须要输入 userId 和 type 以及 fileName 和 newName 参数才可以进行删除"
+            const err = "您必须要输入 userId 和 type 以及 fileName 和 newName 参数才可以进行重命名"
             if (errorFun !== undefined) {
                 errorFun(err)
             } else {
@@ -267,6 +267,69 @@ class DiskMirror {
             {
                 method: 'post',
                 url: this.diskMirrorUrl + this.getController() + '/reName',
+                data: formData,
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            }
+        ).then(function (res) {
+            if (res.data['res'] !== 'ok!!!!') {
+                if (errorFun !== undefined) {
+                    errorFun(res.data)
+                }
+                return;
+            }
+            if (okFun !== undefined) {
+                okFun(res.data)
+            } else {
+                console.info(res.data)
+            }
+        }).catch(function (err) {
+            if (errorFun !== undefined) {
+                errorFun(err)
+            } else {
+                console.error(err)
+            }
+        });
+    }
+
+    /**
+     * 针对指定空间的指定文件目录进行创建
+     * @param userId {int} 空间id
+     * @param type {'TEXT'|'Binary'} 文件类型
+     * @param fileName {string} 需要被创建的文件目录名称
+     * @param okFun {function} 操作成功之后的回调函数 输入是被创建的文件目录的json对象
+     * @param errorFun {function} 操作失败之后的回调函数 输入是错误信息
+     * @param checkFun {function} 操作前的检查函数 输入是请求参数对象，如果返回的是一个false 则代表检查失败不继续操作
+     */
+    mkdirs(userId, type, fileName, okFun = undefined, errorFun = (e) => 'res' in e ? alert(e['res']) : alert(e), checkFun = undefined) {
+        if (userId === undefined || type == null || type === '' || fileName === undefined || fileName === '') {
+            const err = "您必须要输入 userId 和 type 以及 fileName 参数才可以进行文件目录的创建"
+            if (errorFun !== undefined) {
+                errorFun(err)
+            } else {
+                console.error(err)
+            }
+            return
+        }
+        const formData = new FormData();
+        // 设置请求参数
+        const params = {
+            fileName: fileName,
+            userId: userId,
+            type: type,
+            "secure.key": this.getSk()
+        }
+        if (checkFun !== undefined && !checkFun(params)) {
+            return;
+        }
+        formData.append('params', JSON.stringify(params))
+        // 开始进行请求发送
+        axios.defaults.withCredentials = true;
+        axios(
+            {
+                method: 'post',
+                url: this.diskMirrorUrl + this.getController() + '/mkdirs',
                 data: formData,
                 headers: {
                     'Content-Type': 'multipart/form-data'

@@ -62,9 +62,9 @@ url，在诸多场景中可以简化IO相关的实现操作，能够降低开发
 
 ```js
     // 实例化 盘镜 在这里指向盘镜的后端服务器
-    const diskMirror = new DiskMirror("http://xxx.xxx.xxx");
-    // 设置密钥 这个密钥需要与后端服务器的一致，让后端服务器信任您的身份
-    diskMirror.setSk(123123)
+const diskMirror = new DiskMirror("http://xxx.xxx.xxx");
+// 设置密钥 这个密钥需要与后端服务器的一致，让后端服务器信任您的身份
+diskMirror.setSk(123123)
 ```
 
 #### 上传文件数据
