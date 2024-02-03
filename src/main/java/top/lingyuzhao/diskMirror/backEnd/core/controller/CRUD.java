@@ -52,10 +52,20 @@ public interface CRUD {
 
     /**
      * 创建一个文件目录的后端处理函数
+     *
      * @param httpServletRequest 来自前端的请求对象
      * @return 操作成功之后的返回结果
      */
     @RequestMapping("/mkdirs")
     @ResponseBody
     String mkdirs(HttpServletRequest httpServletRequest);
+
+
+    /**
+     * 获取 盘镜 后端系统 版本号
+     * @return 操作成功之后返回的结果
+     */
+    @RequestMapping("/getVersion")
+    @ResponseBody
+    String getVersion();
 }

@@ -24,7 +24,7 @@
 <script rel="script" type="text/javascript" src="http://www.lingyuzhao.top/js/utils.js"></script>
 <script rel="script" type="text/javascript" src="http://www.lingyuzhao.top/js/lib/axios.min.js"></script>
 <script rel="script" type="text/javascript"
-        src="http://diskmirror.lingyuzhao.top/webJavaScript//diskMirror.js"></script>
+        src="./js/diskMirror.js"></script>
 <script>
     // 实例化盘镜
     const diskMirror = new DiskMirror("http://diskMirror.lingyuzhao.top/DiskMirrorBackEnd");

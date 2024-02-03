@@ -12,6 +12,8 @@ import top.lingyuzhao.diskMirror.core.DiskMirror;
 
 import java.util.Arrays;
 
+import static top.lingyuzhao.diskMirror.backEnd.conf.WebConf.IO_MODE;
+
 /**
  * Spring mvc 的配置类
  *
@@ -122,7 +124,22 @@ public final class DiskMirrorConfig implements WebMvcConfigurer {
         adapter = diskMirror.getAdapter(WEB_CONF);
     }
 
+    /**
+     * 获取 盘镜 后端系统 版本号
+     * @return 操作成功之后返回的结果
+     */
+    public static String getVersion() {
+        final Object orDefault = WEB_CONF.getOrDefault(IO_MODE, DiskMirror.LocalFSAdapter);
+        if (orDefault instanceof DiskMirror){
+            return ((DiskMirror) orDefault).getVersion();
+        }
+        return orDefault.toString();
+    }
 
+    /**
+     * 添加跨域配置 并进行信息日志的打印
+     * @param registry 注册对象
+     */
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         logger.info("盘镜 后端启动，允许跨域列表：" + Arrays.toString(ALL_HOST));

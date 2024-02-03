@@ -14,7 +14,7 @@
 <body>
 <div id="conf_show_div"></div>
 </body>
-<script rel="script" type="text/javascript" src="http://www.lingyuzhao.top/js/utils.js"></script>
+<script rel="script" type="text/javascript" src="./js/diskMirror.js"></script>
 <script>
     document.getElementById('conf_show_div').innerText = formatJson('<%=DiskMirrorConfig.WEB_CONF.toString()%>')
 </script>

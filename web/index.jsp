@@ -1,5 +1,4 @@
-<%@ page import="top.lingyuzhao.diskMirror.backEnd.conf.DiskMirrorConfig" %>
-<%@ page import="top.lingyuzhao.diskMirror.backEnd.conf.WebConf" %><%--
+<%@ page import="top.lingyuzhao.diskMirror.backEnd.conf.DiskMirrorConfig" %><%--
   Created by IntelliJ IDEA.
   User: zhao
   Date: 2023/12/15
@@ -10,6 +9,8 @@
 <html>
 <head>
     <title>盘镜后端服务</title>
+    <!-- 窗口标签页的 logo  ./image/logo.svg 也是盘镜的 logo -->
+    <link rel="icon" href="./image/logo.svg">
     <style>
         body {
             display: flex;
@@ -25,11 +26,13 @@
     </style>
 </head>
 <body>
-<div id="res_show">
-
-</div>
+<pre id="res_show">
+    <code>
+        <%=DiskMirrorConfig.getVersion()%>
+    </code>
+</pre>
 <div>
-    <button onclick="window.open('http://www.lingyuzhao.top/js/diskMirror.js')">启动成功，点击获取 JS 文件</button>
+    <button onclick="window.open('./js/diskMirror.js')">启动成功，点击获取 JS 文件</button>
 </div>
 </body>
 </html>

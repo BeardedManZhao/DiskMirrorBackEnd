@@ -27,7 +27,7 @@
 <script rel="script" type="text/javascript" src="http://www.lingyuzhao.top/js/lib/axios.min.js"></script>
 <script rel="script" type="text/javascript" src="http://www.lingyuzhao.top/js/utils.js"></script>
 <script rel="script" type="text/javascript"
-        src="http://diskmirror.lingyuzhao.top/webJavaScript//diskMirror.js"></script>
+        src="./js/diskMirror.js"></script>
 <script>
     const elementsByName0 = document.getElementsByName("userId")[0];
     const elementsByName1 = document.getElementsByName("file")[0];
