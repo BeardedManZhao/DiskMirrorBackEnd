@@ -26,11 +26,9 @@
     </style>
 </head>
 <body>
-<pre id="res_show">
-    <code>
-        <%=DiskMirrorConfig.getVersion()%>
-    </code>
-</pre>
+<div>
+    <pre id="res_show"><%=DiskMirrorConfig.getVersion()%></pre>
+</div>
 <div>
     <button onclick="window.open('./js/diskMirror.js')">启动成功，点击获取 JS 文件</button>
 </div>
