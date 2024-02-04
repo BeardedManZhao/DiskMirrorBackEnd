@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * 具有增删改查功能的控制器
+ * 具有增删改查功能的控制器接口
  */
 public interface CRUD {
 
