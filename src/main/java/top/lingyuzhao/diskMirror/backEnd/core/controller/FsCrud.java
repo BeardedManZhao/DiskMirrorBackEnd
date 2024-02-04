@@ -8,7 +8,6 @@ import top.lingyuzhao.diskMirror.backEnd.conf.DiskMirrorConfig;
 import top.lingyuzhao.diskMirror.backEnd.conf.WebConf;
 import top.lingyuzhao.diskMirror.backEnd.utils.HttpUtils;
 import top.lingyuzhao.diskMirror.core.Adapter;
-import top.lingyuzhao.diskMirror.core.DiskMirror;
 import top.lingyuzhao.utils.IOUtils;
 
 import javax.servlet.ServletException;
@@ -16,8 +15,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Part;
 import java.io.IOException;
 import java.io.InputStream;
-
-import static top.lingyuzhao.diskMirror.backEnd.conf.WebConf.IO_MODE;
 
 /**
  * 文件系统的增删操作接口
@@ -173,9 +170,10 @@ public class FsCrud implements CRUD {
 
     /**
      * 获取 盘镜 后端系统 版本号
+     *
      * @return 操作成功之后返回的结果
      */
-    public String getVersion(){
+    public String getVersion() {
         return DiskMirrorConfig.getVersion();
     }
 }
