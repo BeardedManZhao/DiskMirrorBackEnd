@@ -21,8 +21,8 @@
 </div>
 
 </body>
-<script rel="script" type="text/javascript" src="http://www.lingyuzhao.top/js/utils.js"></script>
-<script rel="script" type="text/javascript" src="http://www.lingyuzhao.top/js/lib/axios.min.js"></script>
+<script rel="script" type="text/javascript" src="https://www.lingyuzhao.top/js/utils.js"></script>
+<script rel="script" type="text/javascript" src="https://www.lingyuzhao.top/js/lib/axios.min.js"></script>
 <script rel="script" type="text/javascript"
         src="./js/diskMirror.js"></script>
 <script>
