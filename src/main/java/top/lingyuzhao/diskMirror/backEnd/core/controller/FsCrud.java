@@ -114,7 +114,7 @@ public class FsCrud implements CRUD {
                 }
             }
         } catch (IOException | RuntimeException | ServletException e) {
-            WebConf.LOGGER.error("remove 函数调用错误!!!", e);
+            WebConf.LOGGER.error("reName 函数调用错误!!!", e);
             return HttpUtils.getResJsonStr(new JSONObject(), e.toString());
         }
     }
@@ -139,7 +139,7 @@ public class FsCrud implements CRUD {
                 }
             }
         } catch (IOException | RuntimeException | ServletException e) {
-            WebConf.LOGGER.error("add 函数调用错误!!!", e);
+            WebConf.LOGGER.error("get 函数调用错误!!!", e);
             return HttpUtils.getResJsonStr(new JSONObject(), e.toString());
         }
     }
@@ -163,7 +163,7 @@ public class FsCrud implements CRUD {
                 }
             }
         } catch (IOException | RuntimeException | ServletException e) {
-            WebConf.LOGGER.error("add 函数调用错误!!!", e);
+            WebConf.LOGGER.error("mkdirs 函数调用错误!!!", e);
             return HttpUtils.getResJsonStr(new JSONObject(), e.toString());
         }
     }

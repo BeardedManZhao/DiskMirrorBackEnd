@@ -31,11 +31,11 @@ url，在诸多场景中可以简化IO相关的实现操作，能够降低开发
         // 设置每个空间中每种类型的文件存储最大字节数
         DiskMirrorConfig.putOption(WebConf.USER_DISK_MIRROR_SPACE_QUOTA, 128 << 10 << 10);
         // 设置协议前缀 需要确保你的服务器可以访问到这里！！！
-        DiskMirrorConfig.putOption(WebConf.PROTOCOL_PREFIX, "http://diskmirror.lingyuzhao.top");
+        DiskMirrorConfig.putOption(WebConf.PROTOCOL_PREFIX, "https://diskmirror.test.lingyuzhao.top");
         // 设置后端的允许跨域的所有主机
         ALL_HOST = new String[]{
-                "http://www.lingyuzhao.top",
-                "http://www.lingyuzhao.top/"
+                "https://www.lingyuzhao.top",
+                "https://www.lingyuzhao.top/"
         };
         DiskMirrorConfig.putOption(WebConf.ALL_HOST_CONTROL, JSONArray.from(ALL_HOST));
         // 设置访问 diskMirror 时的密钥
@@ -50,6 +50,33 @@ url，在诸多场景中可以简化IO相关的实现操作，能够降低开发
 您可以直接将源码打包成 war 包，然后直接将 war 包放入您的服务器中，然后运行您的web容器即可，例如 tomcat 等，这些操作结束之后 您需要访问您的盘镜 web 页面，页面的地址根据您的部署方式决定。 如果访问到了 web
 页面则代表您的部署成功了，如果没有访问到 web 页面则代表您的部署失败了，您可以联系我，我的邮箱是：liming7887@qq.com。
 
+##### TomCat 启用 目录映射
+
+由于我们的盘镜后端是涉及文件上传的，并且读取是使用的 url，所以我们需要确保 TomCat 可以访问我们的目录，您可以按照下面的方式配置`server.xml`。
+
+```xml
+
+<Context docBase="存储文件的真实路径（一般就是 WebConf.ROOT_DIR 对应的值）"
+         path="存储文件的访问路径（一般就是 WebConf.PROTOCOL_PREFIX 对应的值的路径部分）"
+         reloadable="true"/>
+```
+
+##### TomCat 设置 allowCasualMultipartParsing
+
+因为要上传文件，所以在这里我们要确保 服务器 是可以处理 part 的，以及url，因此可以在 `context.xml` 里面这样配置
+
+```xml
+<!-- TODO 在这里设置 allowCasualMultipartParsing = true 即可成功 -->
+<Context allowCasualMultipartParsing="true">
+
+    <!-- Default set of monitored resources. If one of these changes, the    -->
+    <!-- web application will be reloaded.                                   -->
+    <WatchedResource>WEB-INF/web.xml</WatchedResource>
+    <WatchedResource>WEB-INF/tomcat-web.xml</WatchedResource>
+    <WatchedResource>${catalina.base}/conf/web.xml</WatchedResource>
+</Context>
+```
+
 ### 我如何使用 盘镜
 
 在这里您需要获取到我们在盘镜系统中的 [diskMirror.js](https://github.com/BeardedManZhao/DiskMirrorBackEnd/blob/main/web/js/diskMirror.js)
@@ -61,8 +88,8 @@ url，在诸多场景中可以简化IO相关的实现操作，能够降低开发
 如果您的实例化操作需要多次进行，也不用担心，盘镜整体是一个非常轻量级的框架，其实例化的时间是非常短的，所以您可以多次实例化盘镜，只需要传入不同的配置即可。
 
 ```js
-    // 实例化 盘镜 在这里指向盘镜的后端服务器
-const diskMirror = new DiskMirror("http://xxx.xxx.xxx");
+    // 实例化 盘镜 在这里指向盘镜的后端服务器网址 就是可以直接访问到后端服务器页面的网址
+const diskMirror = new DiskMirror("https://xxx.xxx.xxx");
 // 设置密钥 这个密钥需要与后端服务器的一致，让后端服务器信任您的身份
 diskMirror.setSk(123123)
 ```

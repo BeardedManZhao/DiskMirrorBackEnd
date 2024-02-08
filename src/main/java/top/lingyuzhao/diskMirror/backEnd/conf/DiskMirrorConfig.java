@@ -53,22 +53,23 @@ public final class DiskMirrorConfig implements WebMvcConfigurer {
      */
     static {
         // 配置需要被 盘镜 管理的路径 此路径也应该可以被 web 后端服务器访问到
-        DiskMirrorConfig.putOption(WebConf.ROOT_DIR, "/DiskMirror/data");
+        DiskMirrorConfig.putOption(WebConf.ROOT_DIR, "D:/DiskMirror/data");
         // 配置一切需要被盘镜处理的数据的编码
         DiskMirrorConfig.putOption(WebConf.DATA_TEXT_CHARSET, "UTF-8");
         // 设置每个空间中每种类型的文件存储最大字节数
         DiskMirrorConfig.putOption(WebConf.USER_DISK_MIRROR_SPACE_QUOTA, 128 << 10 << 10);
         // 设置协议前缀 需要确保你的服务器可以访问到这里！！！
-        DiskMirrorConfig.putOption(WebConf.PROTOCOL_PREFIX, "https://diskmirror.lingyuzhao.top");
+        DiskMirrorConfig.putOption(WebConf.PROTOCOL_PREFIX, "https://192.168.1.15:8778/DiskMirrorBackEnd/data");
         // 设置后端的允许跨域的所有主机
         ALL_HOST = new String[]{
                 "https://www.lingyuzhao.top",
-                "https://www.lingyuzhao.top/"
+                "https://www.lingyuzhao.top/",
+                "*"
         };
         DiskMirrorConfig.putOption(WebConf.ALL_HOST_CONTROL, JSONArray.from(ALL_HOST));
         // 设置访问 diskMirror 时的密钥，这个密钥可以是数值也可以是字符串类型的对象，最终会根据特有的计算算法获取到一个数值
         // 获取到的数值会再后端服务运行的时候展示再日志中，前端的 diskMirror 的 js 文件中需要需要将这个数值做为key 才可以进行访问
-        DiskMirrorConfig.putOption(WebConf.SECURE_KEY, "www.diskMirror.top_key");
+        DiskMirrorConfig.putOption(WebConf.SECURE_KEY, 9999);
         // 设置后端的IO模式 请确保这个是最后一个配置项目 因为在配置了此项目之后 就会构建适配器
         DiskMirrorConfig.putOption(WebConf.IO_MODE, DiskMirror.LocalFSAdapter);
     }
