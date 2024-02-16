@@ -42,6 +42,8 @@ url，在诸多场景中可以简化IO相关的实现操作，能够降低开发
         DiskMirrorConfig.WEB_CONF.setSecureKey("diskMirror-BackEnd");
         // 设置后端的IO模式 请确保这个是最后一个配置项目 因为在配置了此项目之后 就会构建适配器
         DiskMirrorConfig.putOption(WebConf.IO_MODE, DiskMirror.LocalFSAdapter);
+        // 显式的设置某个空间的磁盘配额 能让此用户空间不受到磁盘配额限制 这里是让 25 号空间不受限制
+        WEB_CONF.setSpaceMaxSize("25", 256 << 10 << 10);
     }
 ```
 
