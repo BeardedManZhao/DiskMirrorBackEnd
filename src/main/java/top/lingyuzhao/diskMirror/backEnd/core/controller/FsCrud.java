@@ -169,6 +169,17 @@ public class FsCrud implements CRUD {
     }
 
     /**
+     * 获取到指定空间的大小
+     *
+     * @param spaceId 指定的空间的id
+     * @return 返回指定空间的大小 单位是字节
+     */
+    @Override
+    public String getSpaceSize(String spaceId) {
+        return HttpUtils.getResJsonStr(new JSONObject(), adapter.getConfig().getSpaceMaxSize(spaceId));
+    }
+
+    /**
      * 获取 盘镜 后端系统 版本号
      *
      * @return 操作成功之后返回的结果

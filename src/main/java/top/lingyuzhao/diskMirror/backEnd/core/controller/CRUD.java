@@ -60,6 +60,15 @@ public interface CRUD {
     @ResponseBody
     String mkdirs(HttpServletRequest httpServletRequest);
 
+    /**
+     * 获取到指定空间的大小
+     *
+     * @param spaceId 指定的空间的id
+     * @return 返回指定空间的大小 单位是字节
+     */
+    @RequestMapping("/getSpaceSize")
+    @ResponseBody
+    String getSpaceSize(String spaceId);
 
     /**
      * 获取 盘镜 后端系统 版本号

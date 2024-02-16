@@ -355,4 +355,42 @@ class DiskMirror {
             }
         });
     }
+
+    /**
+     * 获取指定空间的最大容量 单位是 字节
+     * @param userId {int} 需要被检索的空间id
+     * @param okFun {function} 操作成功之后的回调函数 输入是被创建的文件目录的json对象
+     * @param errorFun {function} 操作失败之后的回调函数 输入是错误信息
+     */
+    getSpaceMaxSize(userId, okFun = undefined, errorFun = (e) => 'res' in e ? alert(e['res']) : alert(e)) {
+        // 开始进行请求发送
+        axios.defaults.withCredentials = true;
+        axios(
+            {
+                method: 'post',
+                url: this.diskMirrorUrl + this.getController() + '/mkdirs',
+                params: {
+                    spaceId: userId.toString()
+                }
+            }
+        ).then(function (res) {
+            if (isNaN(res.data)) {
+                if (errorFun !== undefined) {
+                    errorFun(res.data)
+                }
+                return;
+            }
+            if (okFun !== undefined) {
+                okFun(res.data)
+            } else {
+                console.info(res.data)
+            }
+        }).catch(function (err) {
+            if (errorFun !== undefined) {
+                errorFun(err)
+            } else {
+                console.error(err)
+            }
+        });
+    }
 }
