@@ -58,9 +58,8 @@ url，在诸多场景中可以简化IO相关的实现操作，能够降低开发
 
 ```xml
 
-<Context docBase="存储文件的真实路径（一般就是 WebConf.ROOT_DIR 对应的值）"
-         path="存储文件的访问路径（一般就是 WebConf.PROTOCOL_PREFIX 对应的值的路径部分）"
-         reloadable="true"/>
+<Context docBase="存储文件的真实路径（一般就是 WebConf.ROOT_DIR 对应的值）" path="存储文件的访问路径（一般就是 WebConf.PROTOCOL_PREFIX 对应的值的路径部分）"
+    reloadable="true" />
 ```
 
 ##### TomCat 设置 allowCasualMultipartParsing

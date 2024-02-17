@@ -172,6 +172,7 @@ public class FsCrud implements CRUD {
     /**
      * 获取到指定空间的大小
      * 依赖 diskMirror 1.1.1 以及以上版本！！
+     *
      * @param spaceId 指定的空间的id
      * @return 返回指定空间的大小 单位是字节
      */
@@ -183,6 +184,7 @@ public class FsCrud implements CRUD {
     /**
      * 设置指定空间的大小，此操作需要提供安全密钥
      * 依赖 diskMirror 1.1.1 以及以上版本！！
+     *
      * @param httpServletRequest 请求对象
      * @return 操作结果
      */
@@ -216,6 +218,7 @@ public class FsCrud implements CRUD {
     /**
      * 获取 盘镜 后端系统 版本号
      * 依赖 diskMirror 1.1.1 以及以上版本！！
+     *
      * @return 操作成功之后返回的结果
      */
     public String getVersion() {
