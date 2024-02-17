@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import top.lingyuzhao.diskMirror.backEnd.conf.DiskMirrorConfig;
 import top.lingyuzhao.diskMirror.backEnd.conf.WebConf;
 import top.lingyuzhao.diskMirror.backEnd.utils.HttpUtils;
+import top.lingyuzhao.diskMirror.conf.Config;
 import top.lingyuzhao.diskMirror.core.Adapter;
 import top.lingyuzhao.utils.IOUtils;
 
@@ -170,7 +171,7 @@ public class FsCrud implements CRUD {
 
     /**
      * 获取到指定空间的大小
-     *
+     * 依赖 diskMirror 1.1.1 以及以上版本！！
      * @param spaceId 指定的空间的id
      * @return 返回指定空间的大小 单位是字节
      */
@@ -180,8 +181,41 @@ public class FsCrud implements CRUD {
     }
 
     /**
+     * 设置指定空间的大小，此操作需要提供安全密钥
+     * 依赖 diskMirror 1.1.1 以及以上版本！！
+     * @param httpServletRequest 请求对象
+     * @return 操作结果
+     */
+    @Override
+    public String setSpaceSize(HttpServletRequest httpServletRequest) {
+        try {
+            final Part params = httpServletRequest.getPart("params");
+            if (params == null) {
+                return HttpUtils.getResJsonStr(new JSONObject(), "您的请求参数为空，请确保您的请求参数 json 字符串存储在 ”params“ 对应的请求数据包中!");
+            } else {
+                try (
+                        final InputStream inputStream = params.getInputStream()
+                ) {
+                    // 获取到 id 和 size 以及安全密钥
+                    final JSONObject jsonObject = JSONObject.parseObject(IOUtils.getStringByStream(inputStream, DiskMirrorConfig.getOptionString(WebConf.DATA_TEXT_CHARSET)));
+                    final Object userId = jsonObject.get("userId");
+                    final Long newSize = jsonObject.getLong("newSize");
+                    if (userId == null || newSize == null) {
+                        throw new UnsupportedOperationException("请求参数不合规，请确保您在调用 setSpaceSize 函数的参数中设置了 userId and newSize， error:" + jsonObject);
+                    }
+                    adapter.setSpaceMaxSize(userId.toString(), newSize);
+                    return HttpUtils.getResJsonStr(jsonObject, this.adapter.getConfig().getString(Config.OK_VALUE));
+                }
+            }
+        } catch (IOException | RuntimeException | ServletException e) {
+            WebConf.LOGGER.error("mkdirs 函数调用错误!!!", e);
+            return HttpUtils.getResJsonStr(new JSONObject(), e.toString());
+        }
+    }
+
+    /**
      * 获取 盘镜 后端系统 版本号
-     *
+     * 依赖 diskMirror 1.1.1 以及以上版本！！
      * @return 操作成功之后返回的结果
      */
     public String getVersion() {

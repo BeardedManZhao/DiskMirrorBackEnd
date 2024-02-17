@@ -71,6 +71,15 @@ public interface CRUD {
     String getSpaceSize(String spaceId);
 
     /**
+     * 设置指定空间的大小，此操作需要提供安全密钥
+     * @param httpServletRequest 请求对象
+     * @return 操作结果
+     */
+    @RequestMapping("/setSpaceSize")
+    @ResponseBody
+    String setSpaceSize(HttpServletRequest httpServletRequest);
+
+    /**
      * 获取 盘镜 后端系统 版本号
      *
      * @return 操作成功之后返回的结果

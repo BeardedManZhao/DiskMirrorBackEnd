@@ -358,6 +358,9 @@ class DiskMirror {
 
     /**
      * 获取指定空间的最大容量 单位是 字节
+     *
+     * 需要确保远程的 diskMirror 服务器是在 2024年 2 月 17 日 以及之后发布的！！
+     *
      * @param userId {int} 需要被检索的空间id
      * @param okFun {function} 操作成功之后的回调函数 输入是被创建的文件目录的json对象
      * @param errorFun {function} 操作失败之后的回调函数 输入是错误信息
