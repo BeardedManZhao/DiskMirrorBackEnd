@@ -48,6 +48,59 @@ url，在诸多场景中可以简化IO相关的实现操作，能够降低开发
 
 ```
 
+在 2024.02.21 版本中，针对配置的修改操作，移动到了一个函数中，这是为了避免发生各种由于静态代码块导致的错误，且提高了配置的灵活性，因此在2024.02.21 版本 以及 之后的版本中 可以找到下面的函数进行配置的修改动作。
+
+```
+    /**
+     * 加载配置 在 loadConf 函数中我们可以指定一些配置 用于初始化适配器，此函数会在 DiskMirrorConfig 实例化的时候调用，此函数可以进行重写，或者进行修改。
+     * <p>
+     * In the loadConf function, we can specify some configurations to initialize the adapter. This function will be called during the instantiation of DiskMirrorConfig, and can be rewritten or modified.
+     */
+    public static void loadConf() {
+        // 配置需要被 盘镜 管理的路径 此路径也应该可以被 web 后端服务器访问到
+        DiskMirrorConfig.putOption(WebConf.ROOT_DIR, "/DiskMirror/data");
+        // 配置一切需要被盘镜处理的数据的编码
+        DiskMirrorConfig.putOption(WebConf.DATA_TEXT_CHARSET, "UTF-8");
+        // 设置每个空间中每种类型的文件存储最大字节数
+        DiskMirrorConfig.putOption(WebConf.USER_DISK_MIRROR_SPACE_QUOTA, 128 << 10 << 10);
+        // 设置协议前缀 需要确保你的服务器可以访问到这里！！！
+        DiskMirrorConfig.putOption(WebConf.PROTOCOL_PREFIX, "https://xxx/");
+        // 设置后端的允许跨域的所有主机
+        DiskMirrorConfig.putOption(WebConf.ALL_HOST_CONTROL, JSONArray.from(
+                new String[]{
+                        "*"
+                }
+        ));
+
+        // 设置访问 diskMirror 时的密钥，这个密钥可以是数值也可以是字符串类型的对象，最终会根据特有的计算算法获取到一个数值
+        // 获取到的数值会再后端服务运行的时候展示再日志中，前端的 diskMirror 的 js 文件中需要需要将这个数值做为key 才可以进行访问
+        DiskMirrorConfig.putOption(WebConf.SECURE_KEY, 0");
+        // 显式的设置某个空间的磁盘配额 能让此用户空间不受到磁盘配额限制 这里是让 25 号空间不受限制 根据这里的配置来进行操作
+        DiskMirrorConfig.WEB_CONF.setSpaceMaxSize("25", 256 << 10 << 10);
+
+        // 设置后端的IO模式 请确保这个是最后一个配置项目 因为在配置了此项目之后 就会构建适配器
+        DiskMirrorConfig.putOption(WebConf.IO_MODE, DiskMirror.LocalFSAdapter);
+    }
+```
+
+当然 您如果不希望修改代码，也可以直接在 `top.lingyuzhao.diskMirror.backEnd.conf.DiskMirrorInit` 初始化类中的 `createServletApplicationContext`
+方法内设置一些额外配置。
+
+```
+    @Override
+    protected WebApplicationContext createServletApplicationContext() {
+        // 初始化容器对象
+        final AnnotationConfigWebApplicationContext webApplicationContext = new AnnotationConfigWebApplicationContext();
+        // 初始化配置 这里的函数可以传递形参 您可以在形参中指定一个 webConf 对象 这里是 null 代表不需要进行额外配置
+        // 形参中的 webConf 中的配置将会覆盖原有的内置配置数据！
+        DiskMirrorConfig.loadConf(null);
+        // 将配置类注册到容器对象中
+        webApplicationContext.register(DiskMirrorConfig.class);
+        // 返回容器对象
+        return webApplicationContext;
+    }
+```
+
 #### 打包之后直接进行部署
 
 您可以直接将源码打包成 war 包，然后直接将 war 包放入您的服务器中，然后运行您的web容器即可，例如 tomcat 等，这些操作结束之后 您需要访问您的盘镜 web 页面，页面的地址根据您的部署方式决定。 如果访问到了 web
@@ -219,5 +272,8 @@ diskMirror.setSk(123123)
 
 ----
 
-- diskMirror 后端服务器版本：https://github.com/BeardedManZhao/DiskMirrorBackEnd.git
+- diskMirror starter SpringBoot：https://github.com/BeardedManZhao/diskMirror-spring-boot-starter.git
+- diskMirror 后端服务器MVC版本：https://github.com/BeardedManZhao/DiskMirrorBackEnd.git
 - diskMirror Java API 版本：https://github.com/BeardedManZhao/DiskMirror.git
+
+[//]: # (- diskMirror SpringBoot 版本：https://github.com/BeardedManZhao/diskMirror-web-spring-boot.git)

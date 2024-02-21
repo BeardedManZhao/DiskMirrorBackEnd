@@ -34,7 +34,23 @@ public class FsCrud implements CRUD {
     /**
      * 从配置类中获取到适配器对象
      */
-    final Adapter adapter = DiskMirrorConfig.getAdapter();
+    final Adapter adapter;
+
+    /**
+     * 使用 diskMirror 的配置类进行初始化
+     */
+    public FsCrud() {
+        this.adapter = DiskMirrorConfig.getAdapter();
+    }
+
+    /**
+     * 直接使用在外部初始化好的适配器来进行初始化
+     *
+     * @param adapter 在外界实例化好的适配器对象
+     */
+    public FsCrud(Adapter adapter) {
+        this.adapter = adapter;
+    }
 
     /**
      * 增加函数
