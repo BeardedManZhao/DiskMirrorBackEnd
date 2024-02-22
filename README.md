@@ -11,7 +11,9 @@ url，在诸多场景中可以简化IO相关的实现操作，能够降低开发
 
 ### 我如何部署 盘镜 后端系统
 
-#### 下载并修改源码
+本软件支持两种方式进行配置，第一种就是直接下载后端服务器的源码，并进行修改和打包部署，第二种就是直接在 SpringBoot 中进行二次开发，期间进行配置
+
+#### 源码配置 - 下载并修改源码
 
 您需要下载我们的后端系统源码包，并在 `top.lingyuzhao.diskMirror.backEnd.conf.DiskMirrorConfig`
 类中去进行一些配置，下面就是需要被配置的代码块，您可以在类中找到下面的代码块，并在这里进行配置项目的设置或您自己任意的配置初始化行为 。
@@ -99,6 +101,114 @@ url，在诸多场景中可以简化IO相关的实现操作，能够降低开发
         // 返回容器对象
         return webApplicationContext;
     }
+```
+
+#### 二开配置 - 从 maven 获取到后端软件包 并使用 SpringBoot 进行二次开发
+
+您可以在这里查阅奥如何使用 SpringBoot 进行二次开发的方式配置 diskMirror 以及 将程序启动与部署
+
+##### 导入 maven 依赖
+
+```
+    <!--  设置 SpringBoot3 做为父项目 所有的 SpringBoot 项目都应该以此为父项目  -->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.0.5</version>
+    </parent>
+
+    <dependencies>
+
+        <!-- 在 SpringBoot 项目中 有着许多已经实现好的 starter -->
+        <!-- 在这里我们引用的就是 web 中的 starter -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!-- diskMirror 的 starter 依赖 帮助您获取到适配器-->
+        <dependency>
+            <groupId>io.github.BeardedManZhao</groupId>
+            <artifactId>diskMirror-spring-boot-starter</artifactId>
+            <version>1.0.1</version>
+        </dependency>
+
+        <!-- diskMirror 的后端服务器依赖 会自动的使用 diskMirror starter 获取到的适配器 -->
+        <dependency>
+            <groupId>io.github.BeardedManZhao</groupId>
+            <artifactId>DiskMirrorBackEnd</artifactId>
+            <version>2024.02.21</version>
+        </dependency>
+
+        <!-- diskMirror 后端服务器需要的依赖 -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>4.0.1</version>
+        </dependency>
+
+    </dependencies>
+
+```
+##### 开发控制器
+
+这个控制器只需要直接集成 FsCurd 并使用自动配置为 控制器赋予适配器对象即可!
+
+```java
+package top.lingyuzhao.diskMirror.backEnd.springController;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import top.lingyuzhao.diskMirror.core.Adapter;
+
+/**
+ * 控制器 此控制器直接继承了后端版本的控制器 能够直接使用!
+ *
+ * @author zhao
+ */
+@Controller
+@RequestMapping(
+        value = {"FsCrud"},
+        produces = {"text/html;charset=UTF-8"},
+        method = {RequestMethod.POST}
+)
+public class FsCrud extends top.lingyuzhao.diskMirror.backEnd.core.controller.FsCrud {
+
+    @Autowired
+    public FsCrud(Adapter adapter) {
+        super(adapter);
+    }
+}
+
+```
+
+##### 开发启动类
+
+```java
+package top.lingyuzhao.diskMirror.backEnd.springConf;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ConfigurableApplicationContext;
+
+/**
+ * diskMirror 的后端服务器主类
+ * @author zhao
+ */
+@SpringBootApplication(scanBasePackages = "top.lingyuzhao.diskMirror.backEnd.springController")
+public class DiskMirrorMAIN {
+    public final static Logger logger = LoggerFactory.getLogger(DiskMirrorMAIN.class);
+
+    public static void main(String[] args) {
+        final ConfigurableApplicationContext run = SpringApplication.run(DiskMirrorMAIN.class);
+    }
+}
+
 ```
 
 #### 打包之后直接进行部署

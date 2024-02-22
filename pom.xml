@@ -5,7 +5,11 @@
 
     <groupId>io.github.BeardedManZhao</groupId>
     <artifactId>DiskMirrorBackEnd</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>2024.02.21</version>
+    <packaging>jar</packaging>
+    <name>diskMirror</name>
+    <description>diskMirror-java</description>
+    <url>https://github.com/BeardedManZhao/DiskMirrorBackEnd.git</url>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -18,7 +22,7 @@
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-slf4j-impl</artifactId>
             <version>2.20.0</version>
-            <!--            <scope>provided</scope>-->
+            <scope>provided</scope>
         </dependency>
 
         <!-- Log4j2 log facade -->
@@ -26,7 +30,7 @@
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
             <version>2.20.0</version>
-            <!--            <scope>provided</scope>-->
+            <scope>provided</scope>
         </dependency>
 
         <!-- Log4j2 log real surface -->
@@ -34,7 +38,7 @@
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
             <version>2.20.0</version>
-            <!--            <scope>provided</scope>-->
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -53,20 +57,132 @@
             <groupId>io.github.BeardedManZhao</groupId>
             <artifactId>diskMirror</artifactId>
             <version>1.1.1</version>
-            <!--            <scope>provided</scope>-->
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.alibaba.fastjson2</groupId>
             <artifactId>fastjson2</artifactId>
             <version>2.0.25</version>
-            <!--            <scope>provided</scope>-->
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>io.github.BeardedManZhao</groupId>
             <artifactId>zhao-utils</artifactId>
             <version>1.0.20240121</version>
-            <!--            <scope>provided</scope>-->
+            <scope>provided</scope>
         </dependency>
     </dependencies>
+    <!--    添加开源协议-->
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
 
+    <!--    添加作者信息-->
+    <developers>
+        <developer>
+            <name>LingYuZhao</name>
+            <email>liming7887@qq.com</email>
+            <organization>https://github.com/BeardedManZhao</organization>
+        </developer>
+    </developers>
+
+    <!--    添加项目信息-->
+    <scm>
+        <connection>https://github.com/BeardedManZhao/DiskMirrorBackEnd.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com:BeardedManZhao/DiskMirrorBackEnd.git
+        </developerConnection>
+        <url>https://github.com/BeardedManZhao/DiskMirrorBackEnd.git</url>
+    </scm>
+
+    <profiles>
+        <profile>
+            <properties>
+                <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+                <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+            </properties>
+
+            <id>ossrh</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <!--发布到中央仓库插件-->
+                <plugins>
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <version>1.6.7</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <serverId>ossrh</serverId>
+                            <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                        </configuration>
+                    </plugin>
+
+                    <!--生成源码插件-->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>3.0.0</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <!--生成API文档插件-->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>2.9.1</version>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <!--gpg插件-->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.5</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                </plugins>
+            </build>
+
+            <distributionManagement>
+                <snapshotRepository>
+                    <id>ossrh</id>
+                    <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+                </snapshotRepository>
+                <repository>
+                    <id>ossrh</id>
+                    <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+                </repository>
+            </distributionManagement>
+        </profile>
+    </profiles>
 </project>

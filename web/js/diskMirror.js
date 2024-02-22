@@ -396,4 +396,35 @@ class DiskMirror {
             }
         });
     }
+
+    /**
+     * 获取后端中的盘镜内核的版本
+     *
+     * 需要确保远程的 diskMirror 服务器是在 2024年 2 月 17 日 以及之后发布的！！
+     *
+     * @param okFun {function} 操作成功之后的回调函数 输入是被创建的文件目录的json对象
+     * @param errorFun {function} 操作失败之后的回调函数 输入是错误信息
+     */
+    getVersion(okFun = undefined, errorFun = (e) => 'res' in e ? alert(e['res']) : alert(e)) {
+        // 开始进行请求发送
+        axios.defaults.withCredentials = true;
+        axios(
+            {
+                method: 'post',
+                url: this.diskMirrorUrl + this.getController() + '/getVersion',
+            }
+        ).then(function (res) {
+            if (okFun !== undefined) {
+                okFun(res.data)
+            } else {
+                console.info(res.data)
+            }
+        }).catch(function (err) {
+            if (errorFun !== undefined) {
+                errorFun(err)
+            } else {
+                console.error(err)
+            }
+        });
+    }
 }

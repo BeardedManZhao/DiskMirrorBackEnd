@@ -1,7 +1,8 @@
 package top.lingyuzhao.diskMirror.backEnd.conf;
 
 import com.alibaba.fastjson2.JSONArray;
-import com.sun.istack.internal.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -11,6 +12,7 @@ import top.lingyuzhao.diskMirror.core.Adapter;
 import top.lingyuzhao.diskMirror.core.DiskMirror;
 
 import static top.lingyuzhao.diskMirror.backEnd.conf.WebConf.IO_MODE;
+import static top.lingyuzhao.diskMirror.backEnd.conf.WebConf.LOGGER;
 
 /**
  * Spring mvc 的配置类
@@ -34,7 +36,7 @@ public final class DiskMirrorConfig implements WebMvcConfigurer {
      * 回复页面要使用的字符集
      */
     public static final String CHARSET = "UTF-8";
-    public final static Logger logger = Logger.getLogger(DiskMirrorConfig.class);
+
     /**
      * 操作过程中需要使用的适配器对象
      */
@@ -49,7 +51,7 @@ public final class DiskMirrorConfig implements WebMvcConfigurer {
     public static void loadConf(WebConf webConf) {
         loadConf();
         if (webConf != null) {
-            logger.info("public static void loadConf(webConf) run!!!");
+            LOGGER.info("public static void loadConf(webConf) run!!!");
             // 加载额外配置 会覆盖原本的配置
             webConf.forEach(DiskMirrorConfig::putOption);
         }
@@ -61,7 +63,7 @@ public final class DiskMirrorConfig implements WebMvcConfigurer {
      * In the loadConf function, we can specify some configurations to initialize the adapter. This function will be called during the instantiation of DiskMirrorConfig, and can be rewritten or modified.
      */
     public static void loadConf() {
-        logger.info("public static void loadConf() run!!!");
+        LOGGER.info("public static void loadConf() run!!!");
         // 配置需要被 盘镜 管理的路径 此路径也应该可以被 web 后端服务器访问到
         DiskMirrorConfig.putOption(WebConf.ROOT_DIR, "/DiskMirror/data");
         // 配置一切需要被盘镜处理的数据的编码
@@ -69,7 +71,7 @@ public final class DiskMirrorConfig implements WebMvcConfigurer {
         // 设置每个空间中每种类型的文件存储最大字节数
         DiskMirrorConfig.putOption(WebConf.USER_DISK_MIRROR_SPACE_QUOTA, 128 << 10 << 10);
         // 设置协议前缀 需要确保你的服务器可以访问到这里！！！
-        DiskMirrorConfig.putOption(WebConf.PROTOCOL_PREFIX, "https://xxxxx/");
+        DiskMirrorConfig.putOption(WebConf.PROTOCOL_PREFIX, "https://diskmirror.lingyuzhao.top/");
         // 设置后端的允许跨域的所有主机
         DiskMirrorConfig.putOption(WebConf.ALL_HOST_CONTROL, JSONArray.from(
                 new String[]{
@@ -80,7 +82,7 @@ public final class DiskMirrorConfig implements WebMvcConfigurer {
 
         // 设置访问 diskMirror 时的密钥，这个密钥可以是数值也可以是字符串类型的对象，最终会根据特有的计算算法获取到一个数值
         // 获取到的数值会再后端服务运行的时候展示再日志中，前端的 diskMirror 的 js 文件中需要需要将这个数值做为key 才可以进行访问
-        DiskMirrorConfig.putOption(WebConf.SECURE_KEY, 0);
+        DiskMirrorConfig.putOption(WebConf.SECURE_KEY, 2123691651);
         // 显式的设置某个空间的磁盘配额 能让此用户空间不受到磁盘配额限制 这里是让 25 号空间不受限制 根据这里的配置来进行操作
         DiskMirrorConfig.WEB_CONF.setSpaceMaxSize("25", 256 << 10 << 10);
 
@@ -139,7 +141,7 @@ public final class DiskMirrorConfig implements WebMvcConfigurer {
      */
     public static void reload() {
         final DiskMirror diskMirror = (DiskMirror) getOption(WebConf.IO_MODE);
-        logger.info("diskMirror 构建适配器:" + diskMirror.toString() + "\n" + diskMirror.getVersion());
+        LOGGER.info("diskMirror 构建适配器:" + diskMirror.toString() + "\n" + diskMirror.getVersion());
         adapter = diskMirror.getAdapter(WEB_CONF);
     }
 
@@ -164,8 +166,8 @@ public final class DiskMirrorConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         final JSONArray jsonArray = WEB_CONF.getJSONArray(WebConf.ALL_HOST_CONTROL);
-        logger.info("盘镜 后端启动，允许跨域列表：" + jsonArray);
-        logger.info("盘镜 后端加载配置，安全密钥：" + WEB_CONF.getSecureKey());
+        LOGGER.info("盘镜 后端启动，允许跨域列表：" + jsonArray);
+        LOGGER.info("盘镜 后端加载配置，安全密钥：" + WEB_CONF.getSecureKey());
         registry.addMapping("/**")
                 .allowedHeaders("*")
                 .allowedOrigins(jsonArray.stream().map(Object::toString).toArray(String[]::new))
