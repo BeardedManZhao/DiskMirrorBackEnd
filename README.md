@@ -383,7 +383,6 @@ diskMirror.setSk(123123)
 ----
 
 - diskMirror starter SpringBoot：https://github.com/BeardedManZhao/diskMirror-spring-boot-starter.git
-- diskMirror 后端服务器MVC版本：https://github.com/BeardedManZhao/DiskMirrorBackEnd.git
+- diskMirror 后端服务器版本（MVC）：https://github.com/BeardedManZhao/DiskMirrorBackEnd.git
+- diskMirror 后端服务器版本（SpringBoot）：https://github.com/BeardedManZhao/diskMirror-backEnd-spring-boot.git
 - diskMirror Java API 版本：https://github.com/BeardedManZhao/DiskMirror.git
-
-[//]: # (- diskMirror SpringBoot 版本：https://github.com/BeardedManZhao/diskMirror-web-spring-boot.git)
