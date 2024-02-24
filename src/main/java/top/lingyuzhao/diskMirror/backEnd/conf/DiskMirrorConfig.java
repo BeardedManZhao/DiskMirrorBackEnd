@@ -11,6 +11,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import top.lingyuzhao.diskMirror.core.Adapter;
 import top.lingyuzhao.diskMirror.core.DiskMirror;
 
+import java.util.Map;
+
 import static top.lingyuzhao.diskMirror.backEnd.conf.WebConf.IO_MODE;
 import static top.lingyuzhao.diskMirror.backEnd.conf.WebConf.LOGGER;
 
@@ -48,7 +50,7 @@ public final class DiskMirrorConfig implements WebMvcConfigurer {
      *
      * @param webConf 这里就是代表使用的额外的配置
      */
-    public static void loadConf(WebConf webConf) {
+    public static void loadConf(Map<String, Object> webConf) {
         final boolean b = webConf != null;
         loadConf(!b);
         if (b) {
