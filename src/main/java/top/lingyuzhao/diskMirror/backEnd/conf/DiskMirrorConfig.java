@@ -49,11 +49,13 @@ public final class DiskMirrorConfig implements WebMvcConfigurer {
      * @param webConf 这里就是代表使用的额外的配置
      */
     public static void loadConf(WebConf webConf) {
-        loadConf();
-        if (webConf != null) {
+        final boolean b = webConf != null;
+        loadConf(!b);
+        if (b) {
             LOGGER.info("public static void loadConf(webConf) run!!!");
             // 加载额外配置 会覆盖原本的配置
             webConf.forEach(DiskMirrorConfig::putOption);
+            reload();
         }
     }
 
@@ -63,6 +65,16 @@ public final class DiskMirrorConfig implements WebMvcConfigurer {
      * In the loadConf function, we can specify some configurations to initialize the adapter. This function will be called during the instantiation of DiskMirrorConfig, and can be rewritten or modified.
      */
     public static void loadConf() {
+        loadConf(true);
+    }
+
+    /**
+     * 加载配置 在 loadConf 函数中我们可以指定一些配置 用于初始化适配器，此函数会在 DiskMirrorConfig 实例化的时候调用，此函数可以进行重写，或者进行修改。
+     * <p>
+     * In the loadConf function, we can specify some configurations to initialize the adapter. This function will be called during the instantiation of DiskMirrorConfig, and can be rewritten or modified.
+     * @param useReLoad 是否重新刷新配置
+     */
+    public static void loadConf(boolean useReLoad) {
         LOGGER.info("public static void loadConf() run!!!");
         // 配置需要被 盘镜 管理的路径 此路径也应该可以被 web 后端服务器访问到
         DiskMirrorConfig.putOption(WebConf.ROOT_DIR, "/DiskMirror/data");
@@ -85,9 +97,14 @@ public final class DiskMirrorConfig implements WebMvcConfigurer {
         DiskMirrorConfig.putOption(WebConf.SECURE_KEY, 2123691651);
         // 显式的设置某个空间的磁盘配额 能让此用户空间不受到磁盘配额限制 这里是让 25 号空间不受限制 根据这里的配置来进行操作
         DiskMirrorConfig.WEB_CONF.setSpaceMaxSize("25", 256 << 10 << 10);
-
-        // 设置后端的IO模式 请确保这个是最后一个配置项目 因为在配置了此项目之后 就会构建适配器
-        DiskMirrorConfig.putOption(WebConf.IO_MODE, DiskMirror.LocalFSAdapter);
+        if (useReLoad){
+            // 如果在这个时候操作都准备好了（使用 useReLoad 判断是否已经准备好了）
+            // 最后就设置后端的IO模式 请确保这个是最后一个配置项目 因为在配置了此项目之后 就会构建适配器
+            DiskMirrorConfig.putOption(WebConf.IO_MODE, DiskMirror.LocalFSAdapter);
+        } else {
+            // 如果没有准备好就使用这样的函数赋值 这可以不触发 reload
+            WEB_CONF.put(IO_MODE, DiskMirror.LocalFSAdapter);
+        }
     }
 
     /**

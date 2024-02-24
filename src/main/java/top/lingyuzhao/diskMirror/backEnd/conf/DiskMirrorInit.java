@@ -4,6 +4,7 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.servlet.support.AbstractDispatcherServletInitializer;
+import top.lingyuzhao.diskMirror.core.DiskMirror;
 
 import javax.servlet.Filter;
 
@@ -23,9 +24,11 @@ public class DiskMirrorInit extends AbstractDispatcherServletInitializer {
     protected WebApplicationContext createServletApplicationContext() {
         // 初始化容器对象
         final AnnotationConfigWebApplicationContext webApplicationContext = new AnnotationConfigWebApplicationContext();
-        // 初始化配置 这里的函数可以传递形参 您可以在形参中指定一个 webConf 对象 这里是 null 代表不需要进行额外配置
+        // 初始化配置 这里的函数可以传递形参 您可以在形参中指定一个 webConf 对象 如果这里是 null 代表不需要进行额外配置
         // 形参中的 webConf 中的配置将会覆盖原有的内置配置数据！
-        DiskMirrorConfig.loadConf(null);
+        final WebConf webConf = new WebConf();
+        webConf.setSecureKey(0);
+        DiskMirrorConfig.loadConf(webConf);
         // 将配置类注册到容器对象中
         webApplicationContext.register(DiskMirrorConfig.class);
         // 返回容器对象
