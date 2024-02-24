@@ -1,6 +1,8 @@
 package top.lingyuzhao.diskMirror.backEnd.conf;
 
 import com.alibaba.fastjson2.JSONArray;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -72,7 +74,6 @@ public final class DiskMirrorConfig implements WebMvcConfigurer {
      * 加载配置 在 loadConf 函数中我们可以指定一些配置 用于初始化适配器，此函数会在 DiskMirrorConfig 实例化的时候调用，此函数可以进行重写，或者进行修改。
      * <p>
      * In the loadConf function, we can specify some configurations to initialize the adapter. This function will be called during the instantiation of DiskMirrorConfig, and can be rewritten or modified.
-     *
      * @param useReLoad 是否重新刷新配置
      */
     public static void loadConf(boolean useReLoad) {
@@ -98,7 +99,7 @@ public final class DiskMirrorConfig implements WebMvcConfigurer {
         DiskMirrorConfig.putOption(WebConf.SECURE_KEY, 2123691651);
         // 显式的设置某个空间的磁盘配额 能让此用户空间不受到磁盘配额限制 这里是让 25 号空间不受限制 根据这里的配置来进行操作
         DiskMirrorConfig.WEB_CONF.setSpaceMaxSize("25", 256 << 10 << 10);
-        if (useReLoad) {
+        if (useReLoad){
             // 如果在这个时候操作都准备好了（使用 useReLoad 判断是否已经准备好了）
             // 最后就设置后端的IO模式 请确保这个是最后一个配置项目 因为在配置了此项目之后 就会构建适配器
             DiskMirrorConfig.putOption(WebConf.IO_MODE, DiskMirror.LocalFSAdapter);
