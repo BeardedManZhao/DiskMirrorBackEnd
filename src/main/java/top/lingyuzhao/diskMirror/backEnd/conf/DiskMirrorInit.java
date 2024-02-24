@@ -4,7 +4,6 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.servlet.support.AbstractDispatcherServletInitializer;
-import top.lingyuzhao.diskMirror.core.DiskMirror;
 
 import javax.servlet.Filter;
 import java.util.HashMap;
