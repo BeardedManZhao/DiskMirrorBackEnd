@@ -389,7 +389,11 @@ class DiskMirror {
             }
             return
         }
-        if (checkFun !== undefined && !checkFun(params)) {
+        if (checkFun !== undefined && !checkFun({
+            userId: userId,
+            type: type,
+            fileName: fileName
+        })) {
             return;
         }
         // 开始计算 url
