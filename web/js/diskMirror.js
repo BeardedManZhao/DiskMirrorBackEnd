@@ -421,16 +421,17 @@ class DiskMirror {
                 }
             }
         ).then(function (res) {
-            if (isNaN(res.data)) {
+            const data = res.data;
+            if (isNaN(data['res'])) {
                 if (errorFun !== undefined) {
-                    errorFun(res.data)
+                    errorFun(data['res'] + " is NAN!!!")
                 }
                 return;
             }
             if (okFun !== undefined) {
-                okFun(res.data)
+                okFun(data['res'])
             } else {
-                console.info(res.data)
+                console.info(data['res'])
             }
         }).catch(function (err) {
             if (errorFun !== undefined) {

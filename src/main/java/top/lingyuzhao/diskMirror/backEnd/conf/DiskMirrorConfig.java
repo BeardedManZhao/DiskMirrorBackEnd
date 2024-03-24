@@ -84,7 +84,7 @@ public final class DiskMirrorConfig implements WebMvcConfigurer {
         // 设置每个空间中每种类型的文件存储最大字节数
         DiskMirrorConfig.putOption(WebConf.USER_DISK_MIRROR_SPACE_QUOTA, 128 << 10 << 10);
         // 设置协议前缀 需要确保你的服务器可以访问到这里！！！
-        DiskMirrorConfig.putOption(WebConf.PROTOCOL_PREFIX, "https://xxx.xxx/");
+        DiskMirrorConfig.putOption(WebConf.PROTOCOL_PREFIX, "https://xxx.top/");
         // 设置后端的允许跨域的所有主机
         DiskMirrorConfig.putOption(WebConf.ALL_HOST_CONTROL, JSONArray.from(
                 new String[]{
