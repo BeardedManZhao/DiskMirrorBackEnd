@@ -29,7 +29,7 @@
         src="./js/diskMirror.js"></script>
 <script>
     // 实例化盘镜
-    const diskMirror = new DiskMirror("http://diskMirror.lingyuzhao.top/DiskMirrorBackEnd");
+    const diskMirror = new DiskMirror("http://localhost:8080/DiskMirrorBackEnd");
 
     function rm() {
         console.info("rm() run!!!")

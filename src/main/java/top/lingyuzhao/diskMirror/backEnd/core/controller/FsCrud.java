@@ -1,7 +1,9 @@
 package top.lingyuzhao.diskMirror.backEnd.core.controller;
 
 import com.alibaba.fastjson2.JSONObject;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import top.lingyuzhao.diskMirror.backEnd.conf.DiskMirrorConfig;
@@ -12,7 +14,9 @@ import top.lingyuzhao.diskMirror.core.Adapter;
 import top.lingyuzhao.utils.IOUtils;
 
 import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 import java.io.IOException;
 import java.io.InputStream;
@@ -158,6 +162,42 @@ public class FsCrud implements CRUD {
         } catch (IOException | RuntimeException | ServletException e) {
             WebConf.LOGGER.error("get 函数调用错误!!!", e);
             return HttpUtils.getResJsonStr(new JSONObject(), e.toString());
+        }
+    }
+
+    @Override
+    public void downLoad(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
+                         @PathVariable("userId") String userId, @PathVariable("type") String type,
+                         String fileName, @PathVariable("sk") int sk) {
+        try (
+                ServletOutputStream outputStream = httpServletResponse.getOutputStream()
+        ) {
+            final JSONObject jsonObject = new JSONObject();
+            jsonObject.put("userId", userId);
+            jsonObject.put("fileName", fileName);
+            jsonObject.put("type", type);
+            // 解密
+            jsonObject.put("secure.key", HttpUtils.xorDecrypt(sk));
+
+            WebConf.LOGGER.info("download = " + fileName);
+
+            // 设置响应头部信息
+            httpServletResponse.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+            httpServletResponse.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+            httpServletResponse.setHeader("Pragma", "no-cache");
+            httpServletResponse.setHeader("Expires", "0");
+
+            httpServletResponse.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+
+            InputStream fileInputStream = adapter.downLoad(jsonObject);
+            if (fileInputStream != null) {
+                IOUtils.copy(fileInputStream, outputStream, true);
+            } else {
+                throw new IOException("File not found or unable to download.");
+            }
+        } catch (IOException e) {
+            WebConf.LOGGER.error("downLoad 函数调用错误!!!", e);
+            httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
         }
     }
 

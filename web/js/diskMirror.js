@@ -16,6 +16,20 @@ class DiskMirror {
     }
 
     /**
+     * 通过异或算法加密
+     * @param value {string} 要加密的字符串
+     * @return {int} 加密后的结果
+     */
+    xorEncrypt(value) {
+        let encrypted = 0;
+        const sk_str = this.sk.toString();
+        for (let i = 0; i < value.toString().length; i++) {
+            encrypted ^= value.charCodeAt(i) ^ sk_str.charCodeAt(i % sk_str.length);
+        }
+        return encrypted;
+    }
+
+    /**
      * 设置本组件要使用的盘镜控制器
      * @param controllerName 盘镜控制器名称
      */
@@ -354,6 +368,32 @@ class DiskMirror {
                 console.error(err)
             }
         });
+    }
+
+    /**
+     * 将指定的文件的对象获取到，并传递给您自己提供的函数中！
+     * @param userId {int} 空间id
+     * @param type {'TEXT'|'Binary'} 文件类型
+     * @param fileName {string} 需要被获取的文件目录名称
+     * @param okFun {function} 操作成功之后的回调函数 输入是获取的文件的 url 地址！
+     * @param errorFun {function} 操作失败之后的回调函数 输入是错误信息的错误码
+     * @param checkFun {function} 操作前的检查函数 输入是请求参数对象，如果返回的是一个false 则代表检查失败不继续操作
+     */
+    downLoad(userId, type, fileName, okFun = undefined, errorFun = (e) => 'res' in e ? alert(e['res']) : alert(e), checkFun = undefined) {
+        if (userId === undefined || type == null || type === '' || fileName === undefined || fileName === '' || okFun === undefined) {
+            const err = "您必须要输入 userId 和 type 以及 fileName 和 okFun 参数才可以进行文件对象的获取！"
+            if (errorFun !== undefined) {
+                errorFun(err)
+            } else {
+                console.error(err)
+            }
+            return
+        }
+        if (checkFun !== undefined && !checkFun(params)) {
+            return;
+        }
+        // 开始计算 url
+        okFun(this.diskMirrorUrl + this.getController() + `/downLoad/${userId}/${this.xorEncrypt(this.sk.toString())}/${type}?fileName=${fileName}`)
     }
 
     /**

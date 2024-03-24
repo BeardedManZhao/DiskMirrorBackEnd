@@ -56,4 +56,23 @@ public final class HttpUtils {
         }
         return queryPairs;
     }
+
+    /**
+     * 解密
+     *
+     * @param encrypted 需要被解密的值
+     * @return 解密后的值
+     */
+    public static int xorDecrypt(int encrypted) {
+        int decrypted = 0;
+        final String optionString = DiskMirrorConfig.getOptionString(WebConf.SECURE_KEY);
+        for (int i = 0; i < Integer.toString(encrypted).length(); i++) {
+            char c = (char) (encrypted % 10 + '0');
+            char k = optionString.charAt(i % optionString.length());
+            decrypted ^= c ^ k;
+            encrypted /= 10;
+        }
+        return decrypted;
+    }
+
 }

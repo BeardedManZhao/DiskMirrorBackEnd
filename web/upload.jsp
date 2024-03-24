@@ -23,6 +23,7 @@
 </form>
 <div id="res_show">文件上传成功之后，返回的数据会在这里显示</div>
 <a id="download_a"></a>
+<a id="download_a_by_downLoad"></a>
 </body>
 <script rel="script" type="text/javascript" src="http://www.lingyuzhao.top/js/lib/axios.min.js"></script>
 <script rel="script" type="text/javascript" src="http://www.lingyuzhao.top/js/utils.js"></script>
@@ -34,21 +35,22 @@
     const elementsByName2 = document.getElementsByName("fileType")[0];
 
     // 实例化盘镜
-    const diskMirror = new DiskMirror("http://diskmirror.lingyuzhao.top/DiskMirrorBackEnd");
+    const diskMirror = new DiskMirror("http://localhost:8080/DiskMirrorBackEnd");
 
     document.querySelector('form').addEventListener('submit', function (e) {
         e.preventDefault();
+        const f = {
+            // 文件名字
+            fileName: elementsByName1.files[0].name,
+            // 空间id
+            userId: parseInt(elementsByName0.value),
+            // 文件类型
+            type: elementsByName2.value === 'Y' || elementsByName2.value === 'y' ? 'Binary' : 'TEXT'
+        }
         // 开始进行请求发送
         diskMirror.upload(
             // 设置请求参数数据包
-            {
-                // 文件名字
-                fileName: elementsByName1.files[0].name,
-                // 空间id
-                userId: parseInt(elementsByName0.value),
-                // 文件类型
-                type: elementsByName2.value === 'Y' || elementsByName2.value === 'y' ? 'Binary' : 'TEXT'
-            },
+            f,
             // 设置文件数据包
             elementsByName1.files[0],
             // 设置成功之后的回调函数
@@ -59,6 +61,18 @@
                 const elementById = document.getElementById('download_a');
                 elementById.href = res.url;
                 elementById.innerText = '获取文件数据';
+                const elementById1 = document.getElementById("download_a_by_downLoad");
+                elementById1.innerText = '使用 downLoad 接口下载';
+
+                diskMirror.downLoad(
+                    f.userId,
+                    f.type,
+                    f.fileName,
+                    // 获取到 url 之后直接把 url 赋值！
+                    (res) => {
+                        elementById1.href = res
+                    }
+                )
             },
             // 设置失败之后的回调函数
             function (err) {

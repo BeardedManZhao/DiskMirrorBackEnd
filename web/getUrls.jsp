@@ -27,7 +27,7 @@
         src="./js/diskMirror.js"></script>
 <script>
     // 实例化盘镜
-    const diskMirror = new DiskMirror("http://diskMirror.lingyuzhao.top/DiskMirrorBackEnd");
+    const diskMirror = new DiskMirror("http://localhost:8080/DiskMirrorBackEnd");
 
     function query() {
         console.info("query() run!!!")
@@ -40,5 +40,6 @@
             (err) => console.log(err)
         );
     }
+
 </script>
 </html>

@@ -1,9 +1,13 @@
 package top.lingyuzhao.diskMirror.backEnd.core.controller;
 
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * 具有增删改查功能的控制器接口
@@ -49,6 +53,24 @@ public interface CRUD {
     @RequestMapping("/getUrls")
     @ResponseBody
     String get(HttpServletRequest httpServletRequest);
+
+    /**
+     * 下载文件的后端处理函数
+     *
+     * @param httpServletRequest  来自前端的请求对象
+     * @param httpServletResponse 对接前端的数据回复对象
+     */
+    @RequestMapping(
+            value = "/downLoad/{userId:\\d+}/{sk:\\d+}/{type:[a-zA-Z]+}",
+            method = {RequestMethod.GET, RequestMethod.POST},
+            produces = MediaType.APPLICATION_OCTET_STREAM_VALUE
+    )
+    @ResponseBody
+    void downLoad(HttpServletRequest httpServletRequest,
+                  HttpServletResponse httpServletResponse,
+                  @PathVariable("userId") String userId, @PathVariable("type") String type,
+                  String fileName, @PathVariable("sk") int sk
+    );
 
     /**
      * 创建一个文件目录的后端处理函数
