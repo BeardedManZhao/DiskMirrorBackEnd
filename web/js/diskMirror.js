@@ -17,14 +17,14 @@ class DiskMirror {
 
     /**
      * 通过异或算法加密
-     * @param value {string} 要加密的字符串
-     * @return {int} 加密后的结果
+     * @param value {number} 要加密的字符串
+     * @return {number} 加密后的结果
      */
     xorEncrypt(value) {
-        let encrypted = 0;
+        let encrypted = value;
         const sk_str = this.sk.toString();
-        for (let i = 0; i < value.toString().length; i++) {
-            encrypted ^= value.charCodeAt(i) ^ sk_str.charCodeAt(i % sk_str.length);
+        for (let i = 0; i < sk_str.length; i++) {
+            encrypted -= sk_str.charCodeAt(i) << 1;
         }
         return encrypted;
     }

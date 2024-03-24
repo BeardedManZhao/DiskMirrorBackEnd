@@ -195,7 +195,7 @@ public class FsCrud implements CRUD {
             } else {
                 throw new IOException("File not found or unable to download.");
             }
-        } catch (IOException e) {
+        } catch (RuntimeException | IOException e) {
             WebConf.LOGGER.error("downLoad 函数调用错误!!!", e);
             httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
         }

@@ -64,15 +64,11 @@ public final class HttpUtils {
      * @return 解密后的值
      */
     public static int xorDecrypt(int encrypted) {
-        int decrypted = 0;
-        final String optionString = DiskMirrorConfig.getOptionString(WebConf.SECURE_KEY);
-        for (int i = 0; i < Integer.toString(encrypted).length(); i++) {
-            char c = (char) (encrypted % 10 + '0');
-            char k = optionString.charAt(i % optionString.length());
-            decrypted ^= c ^ k;
-            encrypted /= 10;
+        int temp = encrypted;
+        final String sk_str = String.valueOf(DiskMirrorConfig.WEB_CONF.getSecureKey());
+        for (int i = 0; i < sk_str.length(); ++i) {
+            temp += sk_str.charAt(i) << 1;
         }
-        return decrypted;
+        return temp;
     }
-
 }
