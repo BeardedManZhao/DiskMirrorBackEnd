@@ -415,7 +415,7 @@ class DiskMirror {
         axios(
             {
                 method: 'post',
-                url: this.diskMirrorUrl + this.getController() + '/mkdirs',
+                url: this.diskMirrorUrl + this.getController() + '/getSpaceSize',
                 params: {
                     spaceId: userId.toString()
                 }
