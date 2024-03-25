@@ -61,9 +61,14 @@ public class FsCrud implements CRUD {
      * 获取文件加密的密钥
      *
      * @param httpServletRequest 来自前端的请求对象
+     * @param defKey 默认的密钥值，如果请求对象中没有包含 请求对象 则会使用此参数！
      * @param jsonObject         需要用来存储 key 的 json对象
      */
-    private static void getDiskMirrorXorSecureKey(HttpServletRequest httpServletRequest, JSONObject jsonObject) {
+    private static void getDiskMirrorXorSecureKey(HttpServletRequest httpServletRequest, int defKey, JSONObject jsonObject) {
+        if (httpServletRequest == null || httpServletRequest.getCookies() == null){
+            jsonObject.put("secure.key", defKey);
+            return;
+        }
         for (Cookie cookie1 : httpServletRequest.getCookies()) {
             if ("diskMirror_xor_secure_key".equals(cookie1.getName())) {
                 jsonObject.put("secure.key", HttpUtils.xorDecrypt(Integer.parseInt(cookie1.getValue())));
@@ -184,13 +189,13 @@ public class FsCrud implements CRUD {
     @Override
     public void downLoad(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
                          @PathVariable("userId") String userId, @PathVariable("type") String type,
-                         String fileName) {
+                         String fileName, Integer sk) {
         final JSONObject jsonObject = new JSONObject();
         jsonObject.put("userId", userId);
         jsonObject.put("fileName", fileName);
         jsonObject.put("type", type);
         // 解密 并 提取 sk
-        getDiskMirrorXorSecureKey(httpServletRequest, jsonObject);
+        getDiskMirrorXorSecureKey(httpServletRequest, sk == null ? 0 : sk, jsonObject);
         WebConf.LOGGER.info("download = " + fileName);
 
         // 设置响应头部信息

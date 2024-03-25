@@ -489,10 +489,18 @@ class DiskMirror {
         const cookieName = 'diskMirror_xor_secure_key';
         // 如果存在就更新 cookie 的值
         const encryptedValue = this.xorEncrypt(this.getSk());
+        if (this.isSetCookie && this.cookieValue === encryptedValue && this.cookieDoMain === domain) {
+            // 如果设置过 cookie 且 值 和 域 相同 则这里就不继续更新 cookie 了
+            return;
+        }
         if (domain) {
             document.cookie = `${cookieName}=${encryptedValue};path=/;domain=${domain}`;
             return;
         }
         document.cookie = `${cookieName}=${encryptedValue};path=/`;
+        // 标记 cookie 信息
+        this.isSetCookie = true;
+        this.cookieValue = encryptedValue;
+        this.cookieDoMain = domain;
     }
 }

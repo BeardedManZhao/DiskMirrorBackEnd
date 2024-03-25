@@ -394,6 +394,15 @@ diskMirror.setSk(123123, 'xxx.com')
 </html>
 ```
 
+## 更新记录与信息（从 2024-03-25 之后开始记录）
+
+### 2024-03-26 版本
+
+- 针对 `downLoad` 服务进行优化，使得其能够接收来自 Java API 的请求！
+- 更新 JS 函数，减少其针对 cookie 的操作次数！
+
+## 更多
+
 ----
 
 - diskMirror starter SpringBoot：https://github.com/BeardedManZhao/diskMirror-spring-boot-starter.git
