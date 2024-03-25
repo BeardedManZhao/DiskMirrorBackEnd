@@ -15,6 +15,7 @@ import top.lingyuzhao.utils.IOUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
@@ -54,6 +55,21 @@ public class FsCrud implements CRUD {
      */
     public FsCrud(Adapter adapter) {
         this.adapter = adapter;
+    }
+
+    /**
+     * 获取文件加密的密钥
+     *
+     * @param httpServletRequest 来自前端的请求对象
+     * @param jsonObject         需要用来存储 key 的 json对象
+     */
+    private static void getDiskMirrorXorSecureKey(HttpServletRequest httpServletRequest, JSONObject jsonObject) {
+        for (Cookie cookie1 : httpServletRequest.getCookies()) {
+            if ("diskMirror_xor_secure_key".equals(cookie1.getName())) {
+                jsonObject.put("secure.key", HttpUtils.xorDecrypt(Integer.parseInt(cookie1.getValue())));
+                break;
+            }
+        }
     }
 
     /**
@@ -168,35 +184,37 @@ public class FsCrud implements CRUD {
     @Override
     public void downLoad(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
                          @PathVariable("userId") String userId, @PathVariable("type") String type,
-                         String fileName, @PathVariable("sk") int sk) {
+                         String fileName) {
+        final JSONObject jsonObject = new JSONObject();
+        jsonObject.put("userId", userId);
+        jsonObject.put("fileName", fileName);
+        jsonObject.put("type", type);
+        // 解密 并 提取 sk
+        getDiskMirrorXorSecureKey(httpServletRequest, jsonObject);
+        WebConf.LOGGER.info("download = " + fileName);
+
+        // 设置响应头部信息
+        httpServletResponse.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+        httpServletResponse.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        httpServletResponse.setHeader("Pragma", "no-cache");
+        httpServletResponse.setHeader("Expires", "0");
+
+        httpServletResponse.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+        InputStream fileInputStream = null;
+
+        try {
+            fileInputStream = adapter.downLoad(jsonObject);
+        } catch (IOException | UnsupportedOperationException e) {
+            WebConf.LOGGER.warn(e.toString());
+            httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        }
+
         try (
                 ServletOutputStream outputStream = httpServletResponse.getOutputStream()
         ) {
-            final JSONObject jsonObject = new JSONObject();
-            jsonObject.put("userId", userId);
-            jsonObject.put("fileName", fileName);
-            jsonObject.put("type", type);
-            // 解密
-            jsonObject.put("secure.key", HttpUtils.xorDecrypt(sk));
-
-            WebConf.LOGGER.info("download = " + fileName);
-
-            // 设置响应头部信息
-            httpServletResponse.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
-            httpServletResponse.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-            httpServletResponse.setHeader("Pragma", "no-cache");
-            httpServletResponse.setHeader("Expires", "0");
-
-            httpServletResponse.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
-
-            InputStream fileInputStream = adapter.downLoad(jsonObject);
-            if (fileInputStream != null) {
-                IOUtils.copy(fileInputStream, outputStream, true);
-            } else {
-                throw new IOException("File not found or unable to download.");
-            }
+            IOUtils.copy(fileInputStream, outputStream, true);
         } catch (RuntimeException | IOException e) {
-            WebConf.LOGGER.error("downLoad 函数调用错误!!!", e);
+            WebConf.LOGGER.warn(e.toString());
             httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
         }
     }

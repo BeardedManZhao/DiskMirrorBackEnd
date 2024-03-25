@@ -222,9 +222,10 @@ public class DiskMirrorMAIN {
 您需要访问您的盘镜 web 页面，页面的地址根据您的部署方式决定。 如果访问到了 web
 页面则代表您的部署成功了，如果没有访问到 web 页面则代表您的部署失败了，您可以联系我，我的邮箱是：liming7887@qq.com。
 
-##### TomCat 启用 目录映射
+##### TomCat 启用 目录映射（二选一）
 
-由于我们的盘镜后端是涉及文件上传的，并且读取是使用的 url，所以我们需要确保 TomCat
+由于我们的盘镜后端是涉及文件上传的，肯定是支持文件下载的，盘镜中的文件上传和下载支持两种方式，第一种就是直接读取 url
+这种操作就是通过普通的 url 映射来下载文件，所以我们需要确保 TomCat
 可以访问我们的目录，您可以按照下面的方式配置`server.xml`。
 
 ```xml
@@ -232,6 +233,11 @@ public class DiskMirrorMAIN {
 <Context docBase="存储文件的真实路径（一般就是 WebConf.ROOT_DIR 对应的值）"
     path="存储文件的访问路径（一般就是 WebConf.PROTOCOL_PREFIX 对应的值的路径部分）" reloadable="true" />
 ```
+
+##### TomCat 不启用目录映射 使用 JS 下载（二选一）
+
+在 2024.03.25 之后的项目中，我们使用了 diskMirror 1.1.4 版本，在 JS 文件中可以看到 内置实现了 `download` 函数，因此您可以直接使用
+JS 下载文件，而不通过服务器容器映射！
 
 ##### TomCat 设置 allowCasualMultipartParsing
 
@@ -260,10 +266,11 @@ public class DiskMirrorMAIN {
 如果您的实例化操作需要多次进行，也不用担心，盘镜整体是一个非常轻量级的框架，其实例化的时间是非常短的，所以您可以多次实例化盘镜，只需要传入不同的配置即可。
 
 ```js
-    // 实例化 盘镜 在这里指向盘镜的后端服务器网址 就是可以直接访问到后端服务器页面的网址
+// 实例化 盘镜 在这里指向盘镜的后端服务器网址 就是可以直接访问到后端服务器页面的网址
 const diskMirror = new DiskMirror("https://xxx.xxx.xxx");
 // 设置密钥 这个密钥需要与后端服务器的一致，让后端服务器信任您的身份
-diskMirror.setSk(123123)
+// 第二个参数是代表的域，也就是您的盘镜后端服务在哪个域名下！这会做为一个密钥验证！
+diskMirror.setSk(123123, 'xxx.com')
 ```
 
 #### 上传文件数据

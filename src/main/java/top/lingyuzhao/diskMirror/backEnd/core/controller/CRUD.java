@@ -59,9 +59,12 @@ public interface CRUD {
      *
      * @param httpServletRequest  来自前端的请求对象
      * @param httpServletResponse 对接前端的数据回复对象
+     * @param fileName 需要下载的文件对应的文件名
+     * @param type 需要下载的文件对应的文件类型
+     * @param userId 需要下载的文件所属的空间id
      */
     @RequestMapping(
-            value = "/downLoad/{userId:\\d+}/{sk:\\d+}/{type:[a-zA-Z]+}",
+            value = "/downLoad/{userId:\\d+}/{type:[a-zA-Z]+}",
             method = {RequestMethod.GET, RequestMethod.POST},
             produces = MediaType.APPLICATION_OCTET_STREAM_VALUE
     )
@@ -69,7 +72,7 @@ public interface CRUD {
     void downLoad(HttpServletRequest httpServletRequest,
                   HttpServletResponse httpServletResponse,
                   @PathVariable("userId") String userId, @PathVariable("type") String type,
-                  String fileName, @PathVariable("sk") int sk
+                  String fileName
     );
 
     /**

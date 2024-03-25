@@ -88,8 +88,7 @@ public final class DiskMirrorConfig implements WebMvcConfigurer {
         // 设置后端的允许跨域的所有主机
         DiskMirrorConfig.putOption(WebConf.ALL_HOST_CONTROL, JSONArray.from(
                 new String[]{
-                        "https://www.lingyuzhao.top",
-                        "https://www.lingyuzhao.top/"
+                        "*"
                 }
         ));
 

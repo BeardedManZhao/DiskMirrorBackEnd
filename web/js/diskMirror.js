@@ -48,9 +48,11 @@ class DiskMirror {
     /**
      * 设置本组件使用的盘镜的 安全key
      * @param key {int} 此key 用于标识您的身份，让服务器相信您，且允许您访问，需要设置与服务器相同
+     * @param domain {string} 您希望在哪个域下使用此安全密钥？默认情况下，此值是 undefined，表示您希望在当前域下使用此安全密钥，值得注意是，请确保您的盘镜后端服务器在此域下哦！因为您要携带这个cookie 访问后端呢！
      */
-    setSk(key = 0) {
+    setSk(key = 0, domain = undefined) {
         this.sk = key;
+        this.setDiskMirrorXorSecureKey(domain);
     }
 
     /**
@@ -396,8 +398,10 @@ class DiskMirror {
         })) {
             return;
         }
+        // 判断是否有名为 diskMirror_xor_secure_key 的 cookie 如果没有就直接追加一个 cookie 的名字是 diskMirror_xor_secure_key 内容是 ${this.xorEncrypt(this.sk.toString())}
+
         // 开始计算 url
-        okFun(this.diskMirrorUrl + this.getController() + `/downLoad/${userId}/${this.xorEncrypt(this.sk.toString())}/${type}?fileName=${fileName}`)
+        okFun(this.diskMirrorUrl + this.getController() + `/downLoad/${userId}/${type}?fileName=${fileName}`)
     }
 
     /**
@@ -471,5 +475,24 @@ class DiskMirror {
                 console.error(err)
             }
         });
+    }
+
+    /**
+     * 在一些操作中，我们可能需要将 sk 包含在 cookie 中，因此可能会需要使用这个函数，这个函数一般来说不需要用户手动调用！
+     *
+     * 因为在设置好 sk 的时候，它会自动被调用！请勿随意修改此函数带来的cookie，某些后端服务会使用到！
+     *
+     * @param domain {string} 需要被设置的cookie的域名 默认是当前域
+     */
+    setDiskMirrorXorSecureKey(domain) {
+        // 检查名为 diskMirror_xor_secure_key 的 cookie 是否存在
+        const cookieName = 'diskMirror_xor_secure_key';
+        // 如果存在就更新 cookie 的值
+        const encryptedValue = this.xorEncrypt(this.getSk());
+        if (domain) {
+            document.cookie = `${cookieName}=${encryptedValue};path=/;domain=${domain}`;
+            return;
+        }
+        document.cookie = `${cookieName}=${encryptedValue};path=/`;
     }
 }
