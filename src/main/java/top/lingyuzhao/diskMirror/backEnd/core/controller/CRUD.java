@@ -59,10 +59,10 @@ public interface CRUD {
      *
      * @param httpServletRequest  来自前端的请求对象
      * @param httpServletResponse 对接前端的数据回复对象
-     * @param fileName 需要下载的文件对应的文件名
-     * @param type 需要下载的文件对应的文件类型
-     * @param userId 需要下载的文件所属的空间id
-     * @param sk 操作的时候需要的密钥，此密钥可以不进行加密，当cookie获取不到的时候，才会调用此密钥！
+     * @param fileName            需要下载的文件对应的文件名
+     * @param type                需要下载的文件对应的文件类型
+     * @param userId              需要下载的文件所属的空间id
+     * @param sk                  操作的时候需要的密钥，此密钥可以不进行加密，当cookie获取不到的时候，才会调用此密钥！
      */
     @RequestMapping(
             value = "/downLoad/{userId:\\d+}/{type:[a-zA-Z]+}",

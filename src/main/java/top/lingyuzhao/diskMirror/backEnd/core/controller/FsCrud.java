@@ -39,7 +39,7 @@ public class FsCrud implements CRUD {
     /**
      * 从配置类中获取到适配器对象
      */
-    final Adapter adapter;
+    protected final Adapter adapter;
 
     /**
      * 使用 diskMirror 的配置类进行初始化
@@ -61,11 +61,11 @@ public class FsCrud implements CRUD {
      * 获取文件加密的密钥
      *
      * @param httpServletRequest 来自前端的请求对象
-     * @param defKey 默认的密钥值，如果请求对象中没有包含 请求对象 则会使用此参数！
+     * @param defKey             默认的密钥值，如果请求对象中没有包含 请求对象 则会使用此参数！
      * @param jsonObject         需要用来存储 key 的 json对象
      */
     private static void getDiskMirrorXorSecureKey(HttpServletRequest httpServletRequest, int defKey, JSONObject jsonObject) {
-        if (httpServletRequest == null || httpServletRequest.getCookies() == null){
+        if (httpServletRequest == null || httpServletRequest.getCookies() == null) {
             jsonObject.put("secure.key", defKey);
             return;
         }
@@ -301,6 +301,6 @@ public class FsCrud implements CRUD {
      * @return 操作成功之后返回的结果
      */
     public String getVersion() {
-        return DiskMirrorConfig.getVersion();
+        return DiskMirrorConfig.getVersion(adapter.getConfig());
     }
 }

@@ -6,6 +6,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import top.lingyuzhao.diskMirror.conf.Config;
 import top.lingyuzhao.diskMirror.core.Adapter;
 import top.lingyuzhao.diskMirror.core.DiskMirror;
 
@@ -84,12 +85,11 @@ public final class DiskMirrorConfig implements WebMvcConfigurer {
         // 设置每个空间中每种类型的文件存储最大字节数
         DiskMirrorConfig.putOption(WebConf.USER_DISK_MIRROR_SPACE_QUOTA, 128 << 10 << 10);
         // 设置协议前缀 需要确保你的服务器可以访问到这里！！！
-        DiskMirrorConfig.putOption(WebConf.PROTOCOL_PREFIX, "https://diskmirror.lingyuzhao.top/");
+        DiskMirrorConfig.putOption(WebConf.PROTOCOL_PREFIX, "https://xxx.top/");
         // 设置后端的允许跨域的所有主机
         DiskMirrorConfig.putOption(WebConf.ALL_HOST_CONTROL, JSONArray.from(
                 new String[]{
-                        "https://www.lingyuzhao.top",
-                        "https://www.lingyuzhao.top/"
+                        "*"
                 }
         ));
 
@@ -169,7 +169,17 @@ public final class DiskMirrorConfig implements WebMvcConfigurer {
      * @return 操作成功之后返回的结果
      */
     public static String getVersion() {
-        final Object orDefault = WEB_CONF.getOrDefault(IO_MODE, DiskMirror.LocalFSAdapter);
+        return getVersion(WEB_CONF);
+    }
+
+    /**
+     * 获取 盘镜 后端系统 版本号
+     *
+     * @param config 如果在外界设置了 config 对象，则您可以直接将外界的 config 传递进来 实现版本的计算与获取！
+     * @return 操作成功之后返回的结果
+     */
+    public static String getVersion(Config config) {
+        final Object orDefault = config.getOrDefault(IO_MODE, DiskMirror.LocalFSAdapter);
         if (orDefault instanceof DiskMirror) {
             return ((DiskMirror) orDefault).getVersion();
         }

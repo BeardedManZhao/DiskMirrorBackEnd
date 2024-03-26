@@ -107,18 +107,18 @@ url，在诸多场景中可以简化IO相关的实现操作，能够降低开发
     }
 ```
 
-#### 二开配置 - 从 maven 获取到后端软件包 并使用 SpringBoot 进行二次开发
+#### 二开配置 - 从 maven 获取到后端软件包 并使用 SpringBoot 进行二次开发 - 基于 javax 的 servlet
 
 您可以在这里查阅奥如何使用 SpringBoot 进行二次开发的方式配置 diskMirror 以及 将程序启动与部署
 
 ##### 导入 maven 依赖
 
 ```
-    <!--  设置 SpringBoot3 做为父项目 所有的 SpringBoot 项目都应该以此为父项目  -->
+    <!--  设置 SpringBoot 做为父项目 所有的 SpringBoot 项目都应该以此为父项目  -->
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.0.5</version>
+        <version>x.x.x</version>
     </parent>
 
     <dependencies>
@@ -395,6 +395,12 @@ diskMirror.setSk(123123, 'xxx.com')
 ```
 
 ## 更新记录与信息（从 2024-03-25 之后开始记录）
+
+### 2024-03-27 开始继续开发新版本，版本号将会停留在最终发布的那一天！
+
+- 对于 `getVersion` 函数进行优化，使得其在各种环境下都可以准确的反映出当前的版本号！
+- 将 `FsCrud` 中的适配器对象对于其子类的权限打开，这有益于重写和拓展！
+- 对于 `DiskMirrorConfig.getVersion` 函数进行优化，使得其能够接收来自外界的配置类并计算到正确的版本号！
 
 ### 2024-03-26 版本
 
