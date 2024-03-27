@@ -114,4 +114,14 @@ public interface CRUD {
     @RequestMapping("/getVersion")
     @ResponseBody
     String getVersion();
+
+    /**
+     * 获取 盘镜 后端系统 版本号
+     *
+     * @param httpServletRequest http 的请求对象
+     * @return 操作成功之后返回的结果
+     */
+    @RequestMapping("/getUseSize")
+    @ResponseBody
+    String getUseSize(HttpServletRequest httpServletRequest);
 }

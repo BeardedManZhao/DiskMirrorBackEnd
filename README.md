@@ -401,6 +401,7 @@ diskMirror.setSk(123123, 'xxx.com')
 - 对于 `getVersion` 函数进行优化，使得其在各种环境下都可以准确的反映出当前的版本号！
 - 将 `FsCrud` 中的适配器对象对于其子类的权限打开，这有益于重写和拓展！
 - 对于 `DiskMirrorConfig.getVersion` 函数进行优化，使得其能够接收来自外界的配置类并计算到正确的版本号！
+- 新增 ` String getUseSize(HttpServletRequest httpServletRequest);` 函数，其可以直接获取到一个 diskMirror 空间的已使用的空间大小！
 
 ### 2024-03-26 版本
 
