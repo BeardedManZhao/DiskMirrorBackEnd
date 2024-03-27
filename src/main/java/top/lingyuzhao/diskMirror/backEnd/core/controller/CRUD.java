@@ -116,7 +116,7 @@ public interface CRUD {
     String getVersion();
 
     /**
-     * 获取 盘镜 后端系统 版本号
+     * 获取 盘镜 后端系统 已经使用的所有的空间大小。
      *
      * @param httpServletRequest http 的请求对象
      * @return 操作成功之后返回的结果
