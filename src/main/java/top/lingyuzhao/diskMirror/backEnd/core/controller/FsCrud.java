@@ -316,7 +316,7 @@ public class FsCrud implements CRUD {
                 ) {
                     final JSONObject jsonObject = JSONObject.parseObject(IOUtils.getStringByStream(inputStream, DiskMirrorConfig.getOptionString(WebConf.DATA_TEXT_CHARSET)));
                     jsonObject.put("useSize", adapter.getUseSize(jsonObject));
-                    return jsonObject.toString();
+                    return HttpUtils.getResJsonStr(jsonObject, this.adapter.getConfig().getString(Config.OK_VALUE));
                 }
             }
         } catch (IOException | RuntimeException | ServletException e) {
