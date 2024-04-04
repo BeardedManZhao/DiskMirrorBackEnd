@@ -28,7 +28,7 @@ public class DiskMirrorInit extends AbstractDispatcherServletInitializer {
         // 形参中的 webConf 中的配置将会覆盖原有的内置配置数据！
         final HashMap<String, Object> webConf = new HashMap<>();
         // 设置安全密钥
-        webConf.put(WebConf.SECURE_KEY, 0);
+        webConf.put(WebConf.SECURE_KEY, 1001101010);
         // 加载额外配置
         DiskMirrorConfig.loadConf(webConf);
         // 将配置类注册到容器对象中
