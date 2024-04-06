@@ -52,7 +52,9 @@ class DiskMirror {
      */
     setSk(key = 0, domain = undefined) {
         this.sk = key;
-        this.setDiskMirrorXorSecureKey(domain);
+        if (key !== 0) {
+            this.setDiskMirrorXorSecureKey(domain);
+        }
     }
 
     /**
