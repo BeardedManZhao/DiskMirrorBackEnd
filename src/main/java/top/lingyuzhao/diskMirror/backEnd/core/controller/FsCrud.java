@@ -209,6 +209,7 @@ public class FsCrud implements CRUD {
 
         try {
             fileInputStream = adapter.downLoad(jsonObject);
+            httpServletResponse.setHeader("Content-Length", String.valueOf(fileInputStream.available()));
         } catch (IOException | UnsupportedOperationException e) {
             WebConf.LOGGER.warn(e.toString());
             httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -221,6 +222,44 @@ public class FsCrud implements CRUD {
         } catch (RuntimeException | IOException e) {
             WebConf.LOGGER.warn(e.toString());
             httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        }
+    }
+
+    @Override
+    public String transferDeposit(HttpServletRequest httpServletRequest) {
+        try {
+            final Part params = httpServletRequest.getPart("params");
+            if (params == null) {
+                return HttpUtils.getResJsonStr(new JSONObject(), "您的请求参数为空，请确保您的请求参数 json 字符串存储在 ”params“ 对应的请求数据包中!");
+            } else {
+                try (
+                        final InputStream inputStream = params.getInputStream()
+                ) {
+                    return adapter.transferDeposit(JSONObject.parseObject(IOUtils.getStringByStream(inputStream, DiskMirrorConfig.getOptionString(WebConf.DATA_TEXT_CHARSET)))).toString();
+                }
+            }
+        } catch (IOException | RuntimeException | ServletException e) {
+            WebConf.LOGGER.error("transferDeposit 函数调用错误!!!", e);
+            return HttpUtils.getResJsonStr(new JSONObject(), e.toString());
+        }
+    }
+
+    @Override
+    public String transferDepositStatus(HttpServletRequest httpServletRequest) {
+        try {
+            final Part params = httpServletRequest.getPart("params");
+            if (params == null) {
+                return HttpUtils.getResJsonStr(new JSONObject(), "您的请求参数为空，请确保您的请求参数 json 字符串存储在 ”params“ 对应的请求数据包中!");
+            } else {
+                try (
+                        final InputStream inputStream = params.getInputStream()
+                ) {
+                    return adapter.transferDepositStatus(JSONObject.parseObject(IOUtils.getStringByStream(inputStream, DiskMirrorConfig.getOptionString(WebConf.DATA_TEXT_CHARSET)))).toString();
+                }
+            }
+        } catch (IOException | RuntimeException | ServletException e) {
+            WebConf.LOGGER.error("transferDeposit 函数调用错误!!!", e);
+            return HttpUtils.getResJsonStr(new JSONObject(), e.toString());
         }
     }
 
