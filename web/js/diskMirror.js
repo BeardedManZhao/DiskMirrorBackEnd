@@ -72,12 +72,16 @@ class DiskMirror {
      *      userId: int,
      *      type: 'Binary'|'TEXT'
      * }} 这里是请求参数对象 其中的文件名字代表上传到后端之后的文件名字，userId 代表的就是文件要上传到的指定空间的id；type就是代表的文件的类型 支持二进制和文本两种格式
-     * @param file {File} 需要被上传的文件对象
+     * @param file {File|string} 需要被上传的文件对象
      * @param okFun {function} 操作成功之后的回调函数 输入是被上传文件的json对象
      * @param errorFun {function} 操作失败之后的回调函数 输入是错误信息
      * @param checkFun {function} 上传前的检查函数 输入是上传的文件对象的 json 数据 以及 文件对象本身，如果返回的是一个false 则代表不进行上传操作
      */
     upload(params, file, okFun = undefined, errorFun = (e) => 'res' in e ? alert(e['res']) : alert(e), checkFun = undefined) {
+        if (file instanceof String) {
+            this.upload(params, new File([new Blob([file])], params['fileName']), okFun, errorFun, checkFun);
+            return;
+        }
         if (checkFun !== undefined && !checkFun(params, file)) {
             return;
         }
