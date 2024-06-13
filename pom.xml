@@ -5,7 +5,7 @@
 
     <groupId>io.github.BeardedManZhao</groupId>
     <artifactId>DiskMirrorBackEnd</artifactId>
-    <version>2024.04.12</version>
+    <version>2024.04.26</version>
     <packaging>jar</packaging>
     <name>diskMirror</name>
     <description>diskMirror-java</description>
@@ -56,7 +56,7 @@
         <dependency>
             <groupId>io.github.BeardedManZhao</groupId>
             <artifactId>diskMirror</artifactId>
-            <version>1.2.0</version>
+            <version>1.2.2</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

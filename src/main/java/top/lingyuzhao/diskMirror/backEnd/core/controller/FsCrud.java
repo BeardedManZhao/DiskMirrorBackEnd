@@ -245,6 +245,11 @@ public class FsCrud implements CRUD {
     }
 
     @Override
+    public String getAllProgressBar(String id) {
+        return adapter.getAllProgressBar(id).toString();
+    }
+
+    @Override
     public String transferDepositStatus(HttpServletRequest httpServletRequest) {
         try {
             final Part params = httpServletRequest.getPart("params");

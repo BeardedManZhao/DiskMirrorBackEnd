@@ -90,7 +90,8 @@ public final class DiskMirrorConfig implements WebMvcConfigurer {
         DiskMirrorConfig.putOption(WebConf.ALL_HOST_CONTROL, JSONArray.from(
                 new String[]{
                         "https://www.lingyuzhao.top",
-                        "https://www.lingyuzhao.top/"
+                        "https://www.lingyuzhao.top/",
+                        "http://blog.lingyuzhao.top:8000/"
                 }
         ));
 
