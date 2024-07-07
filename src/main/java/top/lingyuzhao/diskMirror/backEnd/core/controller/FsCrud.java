@@ -368,4 +368,24 @@ public class FsCrud implements CRUD {
             return HttpUtils.getResJsonStr(new JSONObject(), e.toString());
         }
     }
+
+    @Override
+    public String setSpaceSk(HttpServletRequest httpServletRequest) {
+        try {
+            final Part params = httpServletRequest.getPart("params");
+            if (params == null) {
+                return HttpUtils.getResJsonStr(new JSONObject(), "您的请求参数为空，请确保您的请求参数 json 字符串存储在 ”params“ 对应的请求数据包中!");
+            } else {
+                try (
+                        final InputStream inputStream = params.getInputStream()
+                ) {
+                    final JSONObject jsonObject = JSONObject.parseObject(IOUtils.getStringByStream(inputStream, DiskMirrorConfig.getOptionString(WebConf.DATA_TEXT_CHARSET)));
+                    return HttpUtils.getResJsonStr(jsonObject, this.adapter.setSpaceSk(jsonObject.getString("userId")));
+                }
+            }
+        } catch (IOException | RuntimeException | ServletException e) {
+            WebConf.LOGGER.error("getUseSize 函数调用错误!!!", e);
+            return HttpUtils.getResJsonStr(new JSONObject(), e.toString());
+        }
+    }
 }
