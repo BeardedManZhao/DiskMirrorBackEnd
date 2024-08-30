@@ -1,5 +1,6 @@
 package top.lingyuzhao.diskMirror.backEnd.conf;
 
+import com.alibaba.fastjson2.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import top.lingyuzhao.diskMirror.conf.Config;
@@ -26,4 +27,12 @@ public final class WebConf extends Config {
      */
     public static final Logger LOGGER = LoggerFactory.getLogger("DiskMirrorBackEnd");
 
+    @Override
+    public String toString() {
+        // 移除不可加载的配置项，这类配置被使用无用处
+        JSONObject clone = super.clone();
+        clone.remove(GENERATION_RULES);
+        // 返回
+        return clone.toString();
+    }
 }

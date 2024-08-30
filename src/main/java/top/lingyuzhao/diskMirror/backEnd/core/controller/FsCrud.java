@@ -196,7 +196,7 @@ public class FsCrud implements CRUD {
         jsonObject.put("type", type);
         // 解密 并 提取 sk
         getDiskMirrorXorSecureKey(httpServletRequest, sk == null ? 0 : sk, jsonObject);
-        WebConf.LOGGER.info("download = " + fileName);
+        WebConf.LOGGER.info("download = {}", fileName);
 
         // 设置响应头部信息
         httpServletResponse.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");

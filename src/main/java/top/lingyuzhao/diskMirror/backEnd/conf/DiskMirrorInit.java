@@ -6,7 +6,6 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.servlet.support.AbstractDispatcherServletInitializer;
 
 import javax.servlet.Filter;
-import java.util.HashMap;
 
 
 /**
@@ -16,7 +15,7 @@ import java.util.HashMap;
  */
 public class DiskMirrorInit extends AbstractDispatcherServletInitializer {
     /**
-     * 我们需要在这里加载 SpringMVC对应的容器对象
+     * 我们需要在这里加载 SpringMVC对应的容器对象，并加载一些配置信息！
      *
      * @return SpringMVC对应的容器对象
      */
@@ -24,13 +23,6 @@ public class DiskMirrorInit extends AbstractDispatcherServletInitializer {
     protected WebApplicationContext createServletApplicationContext() {
         // 初始化容器对象
         final AnnotationConfigWebApplicationContext webApplicationContext = new AnnotationConfigWebApplicationContext();
-        // 初始化配置 这里的函数可以传递形参 您可以在形参中指定一个 webConf 对象 如果这里是 null 代表不需要进行额外配置
-        // 形参中的 webConf 中的配置将会覆盖原有的内置配置数据！
-        final HashMap<String, Object> webConf = new HashMap<>();
-        // 设置安全密钥
-        webConf.put(WebConf.SECURE_KEY, 0);
-        // 加载额外配置
-        DiskMirrorConfig.loadConf(webConf);
         // 将配置类注册到容器对象中
         webApplicationContext.register(DiskMirrorConfig.class);
         // 返回容器对象

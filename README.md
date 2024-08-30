@@ -15,7 +15,62 @@ url，在诸多场景中可以简化IO相关的实现操作，能够降低开发
 本软件支持两种方式进行配置，第一种就是直接下载后端服务器的源码，并进行修改和打包部署，第二种就是直接在 SpringBoot
 中进行二次开发，期间进行配置
 
-#### 源码配置 - 下载并修改源码
+#### 新版本 - 直接启动 - 自动生成配置文件
+
+首先我们需要设置一下 `DiskMirror_CONF` 的环境变量，其指向一个文件，这个文件就是 diskMirror 的配置文件了！
+
+从 2024-08-30 之后发布的版本中，在我们的程序启动时，会尝试从 `DiskMirror_CONF`
+对应的环境变量读取，这个代表的就是配置文件的存储路径，如果没有读取到会自动生成一份默认的配置！
+然后只需要修改配置文件就可以了，不再需要修改代码了！
+
+新版本的设置是非常简单的！
+
+关于配置文件的描述和信息 如下所示
+
+> 所有关于 `DiskMirror所需要的配置`
+> 的配置项目，我们可以在 [diskMirror-spring-boot-starter的配置文件中查看到](https://github.com/BeardedManZhao/diskMirror-spring-boot-starter#%E9%85%8D%E7%BD%AE-starter)
+
+| 项目名称                         | 配置值类型     | 解释                       |
+|------------------------------|-----------|--------------------------|
+| root.dir                     | String    | DiskMirror所需要的配置         |
+| fs.defaultFS                 | String    | DiskMirror所需要的配置         |
+| ok.value                     | String    | DiskMirror所需要的配置         |
+| resK                         | String    | DiskMirror所需要的配置 res-key |
+| protocol.prefix              | String    | DiskMirror所需要的配置         |
+| user.disk.mirror.space.quota | long      | DiskMirror所需要的配置         |
+| params                       | json      | DiskMirror所需要的配置         |
+| secure.key                   | int       | DiskMirror所需要的配置         |
+| diskMirror.charset           | String    | DiskMirror所需要的配置         |
+| data.text.charset            | String    | 文本数据处理时需要使用的编码集          |
+| all.host.control             | jsonArray | 本服务器运行时的跨域允许列表           |
+| diskMirror.mode              | String    | DiskMirror使用的适配器类型       |
+| SpaceMaxSize                 | json      | config中对于每个用户空间数据容量的配置项目 |
+
+```json
+{
+  "root.dir": "/DiskMirror/data",
+  "fs.defaultFS": "hdfs://127.0.0.1:8020",
+  "ok.value": "ok!!!!",
+  "resK": "res",
+  "protocol.prefix": "https://xxx.lingyuzhao.top/",
+  "user.disk.mirror.space.quota": 134217728,
+  "params": {},
+  "secure.key": 0,
+  "diskMirror.charset": "UTF-8",
+  "data.text.charset": "UTF-8",
+  "all.host.control": [
+    "https://www.lingyuzhao.top",
+    "https://www.lingyuzhao.top/"
+  ],
+  "diskMirror.mode": "LocalFSAdapter",
+  "SpaceMaxSize": {
+    "1": 134217728,
+    "2": 134217728
+  }
+}
+```
+
+#### 旧版本 - 源码配置 - 下载并修改源码
 
 您需要下载我们的后端系统源码包，并在 `top.lingyuzhao.diskMirror.backEnd.conf.DiskMirrorConfig`
 类中去进行一些配置，下面就是需要被配置的代码块，您可以在类中找到下面的代码块，并在这里进行配置项目的设置或您自己任意的配置初始化行为 。
@@ -109,7 +164,7 @@ url，在诸多场景中可以简化IO相关的实现操作，能够降低开发
 
 #### 二开配置 - 从 maven 获取到后端软件包 并使用 SpringBoot 进行二次开发 - 基于 javax 的 servlet
 
-您可以在这里查阅奥如何使用 SpringBoot 进行二次开发的方式配置 diskMirror 以及 将程序启动与部署
+您可以在这里查阅如何使用 SpringBoot 进行二次开发的方式配置 diskMirror 以及 将程序启动与部署
 
 ##### 导入 maven 依赖
 
@@ -231,7 +286,7 @@ public class DiskMirrorMAIN {
 ```xml
 
 <Context docBase="存储文件的真实路径（一般就是 WebConf.ROOT_DIR 对应的值）"
-    path="存储文件的访问路径（一般就是 WebConf.PROTOCOL_PREFIX 对应的值的路径部分）" reloadable="true" />
+         path="存储文件的访问路径（一般就是 WebConf.PROTOCOL_PREFIX 对应的值的路径部分）" reloadable="true"/>
 ```
 
 ##### TomCat 不启用目录映射 使用 JS 下载（二选一）
@@ -395,6 +450,10 @@ diskMirror.setSk(123123, 'xxx.com')
 ```
 
 ## 更新记录与信息（从 2024-03-25 之后开始记录）
+
+### 2024-08-30 版本
+
+-
 
 ### 2024-06-13 版本
 

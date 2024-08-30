@@ -471,7 +471,7 @@ class DiskMirror {
      * @param errorFun {function} 操作失败之后的回调函数 输入是错误信息
      * @param checkFun {function} 操作前的检查函数 输入是请求参数对象，如果返回的是一个false 则代表检查失败不继续操作
      */
-    getAllProgressBar(userId, okFun = undefined, errorFun = (e) => 'res' in e ? alert(e['res']) : alert(e), checkFun = undefined){
+    getAllProgressBar(userId, okFun = undefined, errorFun = (e) => 'res' in e ? alert(e['res']) : alert(e), checkFun = undefined) {
         if (userId === undefined || okFun === undefined) {
             const err = "您必须要输入 userId 和 okFun 参数才可以进行文件对象的获取！";
             if (errorFun !== undefined) {
