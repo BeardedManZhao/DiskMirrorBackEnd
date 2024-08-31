@@ -3,7 +3,9 @@ package top.lingyuzhao.diskMirror.backEnd.conf;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -50,6 +52,10 @@ public final class DiskMirrorConfig implements WebMvcConfigurer {
     public static Adapter adapter;
 
     static {
+        // 盘镜后端 设置接收数据时 可在内存中存储的数据容量 超出则会临时存在磁盘中 这里是 4Mb
+        DiskMirrorConfig.putOption(WebConf.MAX_IN_MEMORY_SIZE, 4096 << 10);
+        // 盘镜后端 设置接收数据的最大大小，单位是字节。-1 代表无限 这是 1 Gb
+        DiskMirrorConfig.putOption(WebConf.MAX_UPLOAD_SIZE, 1024 << 10 << 10);
         // 配置需要被 盘镜 管理的路径 此路径也应该可以被 web 后端服务器访问到
         DiskMirrorConfig.putOption(WebConf.ROOT_DIR, "/DiskMirror/data");
         // 配置一切需要被盘镜处理的数据的编码
@@ -65,7 +71,6 @@ public final class DiskMirrorConfig implements WebMvcConfigurer {
                         "https://www.lingyuzhao.top/",
                 }
         ));
-
         // 设置访问 diskMirror 时的密钥，这个密钥可以是数值也可以是字符串类型的对象，最终会根据特有的计算算法获取到一个数值
         // 获取到的数值会再后端服务运行的时候展示再日志中，前端的 diskMirror 的 js 文件中需要需要将这个数值做为key 才可以进行访问
         DiskMirrorConfig.putOption(WebConf.SECURE_KEY, 0);
@@ -238,4 +243,20 @@ public final class DiskMirrorConfig implements WebMvcConfigurer {
                 .allowCredentials(true)
                 .maxAge(3600);
     }
+
+    // 定义一个CommonsMultipartResolver Bean，用于处理文件上传
+    @Bean(name = "multipartResolver")
+    public CommonsMultipartResolver multipartResolver() {
+        // 创建一个新的CommonsMultipartResolver实例
+        CommonsMultipartResolver resolver = new CommonsMultipartResolver();
+        // 设置默认字符编码 DATA_TEXT_CHARSET ，以支持中文文件名
+        resolver.setDefaultEncoding(DiskMirrorConfig.getOptionString(WebConf.DATA_TEXT_CHARSET));
+        // 设置上传文件的最大大小，单位是字节。此处设置为10MB
+        resolver.setMaxUploadSize(((Number) DiskMirrorConfig.getOption(WebConf.MAX_UPLOAD_SIZE)).longValue());
+        // 设置保存在内存中的文件的最大大小，超过此大小的文件将被保存到磁盘上
+        resolver.setMaxInMemorySize(((Number) DiskMirrorConfig.getOption(WebConf.MAX_IN_MEMORY_SIZE)).intValue()); // 4KB
+        // 返回配置好的CommonsMultipartResolver实例
+        return resolver;
+    }
+
 }

@@ -21,7 +21,14 @@ public final class WebConf extends Config {
      * 盘镜后端跨域列表
      */
     public static final String ALL_HOST_CONTROL = "all.host.control";
-
+    /**
+     * 盘镜后端 设置接收数据的最大大小，单位是字节。-1 代表无限
+     */
+    public static final String MAX_UPLOAD_SIZE = "max.upload.size";
+    /**
+     * 盘镜后端 设置接收数据时 可在内存中存储的数据容量 超出则会临时存在磁盘中
+     */
+    public static final String MAX_IN_MEMORY_SIZE = "max.in.memory.size";
     /**
      * 日志控制器
      */

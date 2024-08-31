@@ -28,23 +28,26 @@ url，在诸多场景中可以简化IO相关的实现操作，能够降低开发
 关于配置文件的描述和信息 如下所示
 
 > 所有关于 `DiskMirror所需要的配置`
-> 的配置项目，我们可以在 [diskMirror-spring-boot-starter的配置文件中查看到](https://github.com/BeardedManZhao/diskMirror-spring-boot-starter#%E9%85%8D%E7%BD%AE-starter)
+>
+的配置项目，我们可以在 [diskMirror-spring-boot-starter的配置文件中查看到](https://github.com/BeardedManZhao/diskMirror-spring-boot-starter#%E9%85%8D%E7%BD%AE-starter)
 
-| 项目名称                         | 配置值类型     | 解释                       |
-|------------------------------|-----------|--------------------------|
-| root.dir                     | String    | DiskMirror所需要的配置         |
-| fs.defaultFS                 | String    | DiskMirror所需要的配置         |
-| ok.value                     | String    | DiskMirror所需要的配置         |
-| resK                         | String    | DiskMirror所需要的配置 res-key |
-| protocol.prefix              | String    | DiskMirror所需要的配置         |
-| user.disk.mirror.space.quota | long      | DiskMirror所需要的配置         |
-| params                       | json      | DiskMirror所需要的配置         |
-| secure.key                   | int       | DiskMirror所需要的配置         |
-| diskMirror.charset           | String    | DiskMirror所需要的配置         |
-| data.text.charset            | String    | 文本数据处理时需要使用的编码集          |
-| all.host.control             | jsonArray | 本服务器运行时的跨域允许列表           |
-| diskMirror.mode              | String    | DiskMirror使用的适配器类型       |
-| SpaceMaxSize                 | json      | config中对于每个用户空间数据容量的配置项目 |
+| 项目名称                         | 配置值类型     | 解释                                    |
+|------------------------------|-----------|---------------------------------------|
+| root.dir                     | String    | DiskMirror所需要的配置                      |
+| fs.defaultFS                 | String    | DiskMirror所需要的配置                      |
+| ok.value                     | String    | DiskMirror所需要的配置                      |
+| resK                         | String    | DiskMirror所需要的配置 res-key              |
+| protocol.prefix              | String    | DiskMirror所需要的配置                      |
+| user.disk.mirror.space.quota | long      | DiskMirror所需要的配置                      |
+| params                       | json      | DiskMirror所需要的配置                      |
+| secure.key                   | int       | DiskMirror所需要的配置                      |
+| diskMirror.charset           | String    | DiskMirror所需要的配置                      |
+| max.in.memory.size           | int       | 盘镜后端 设置接收数据时 可在内存中存储的数据容量 超出则会临时存在磁盘中 |
+| max.upload.size              | long      | 盘镜后端 设置接收数据的最大大小，单位是字节。-1 代表无限        |
+| data.text.charset            | String    | 文本数据处理时需要使用的编码集                       |
+| all.host.control             | jsonArray | 本服务器运行时的跨域允许列表                        |
+| diskMirror.mode              | String    | DiskMirror使用的适配器类型                    |
+| SpaceMaxSize                 | json      | config中对于每个用户空间数据容量的配置项目              |
 
 ```json
 {
@@ -58,6 +61,8 @@ url，在诸多场景中可以简化IO相关的实现操作，能够降低开发
   "secure.key": 0,
   "diskMirror.charset": "UTF-8",
   "data.text.charset": "UTF-8",
+  "max.in.memory.size": 4194304,
+  "max.upload.size": 1073741824,
   "all.host.control": [
     "https://www.lingyuzhao.top",
     "https://www.lingyuzhao.top/"
@@ -310,6 +315,12 @@ JS 下载文件，而不通过服务器容器映射！
 </Context>
 ```
 
+### 关于 DiskMirror 的日志
+
+在 jar 包中有自动包含日志配置，它的日志文件输出位置是在 `./logs` 也就是说，启动Web容器的位置非常重要，它会在您启动
+Web容器的目录中创建一个 logs 目录，并将日志输出到此目录中！
+也可以在控制台中查看到对应的日志输出！
+
 ### 我如何使用 盘镜
 
 在这里您需要获取到我们在盘镜系统中的 [diskMirror.js](https://github.com/BeardedManZhao/DiskMirrorBackEnd/blob/main/web/js/diskMirror.js)
@@ -450,6 +461,13 @@ diskMirror.setSk(123123, 'xxx.com')
 ```
 
 ## 更新记录与信息（从 2024-03-25 之后开始记录）
+
+### 2024-08-31 版本
+
+- 新增了日志功能
+- 对于表单上传文件，我们使用了一些临时落盘的手段来避免表单过大导致内存溢出
+- 提供了两个新的设置项目 `max.in.memory.size` 和 `max.upload.size`
+- 移除了 `WebConf.LOGGER.info("download = {}", fileName);` 减少冗余日志产生！
 
 ### 2024-08-30 版本
 
