@@ -462,12 +462,13 @@ diskMirror.setSk(123123, 'xxx.com')
 
 ## 更新记录与信息（从 2024-03-25 之后开始记录）
 
-### 2024-08-31 版本
+### 2024-08-31 稳定版本
 
 - 新增了日志功能
 - 对于表单上传文件，我们使用了一些临时落盘的手段来避免表单过大导致内存溢出
 - 提供了两个新的设置项目 `max.in.memory.size` 和 `max.upload.size`
 - 移除了 `WebConf.LOGGER.info("download = {}", fileName);` 减少冗余日志产生！
+- 重新为 JS 添加 `getAllProgressBar` 操作!
 
 ### 2024-08-30 版本
 
