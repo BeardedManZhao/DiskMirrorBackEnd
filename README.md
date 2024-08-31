@@ -27,9 +27,8 @@ url，在诸多场景中可以简化IO相关的实现操作，能够降低开发
 
 关于配置文件的描述和信息 如下所示
 
-> 所有关于 `DiskMirror所需要的配置`
->
-的配置项目，我们可以在 [diskMirror-spring-boot-starter的配置文件中查看到](https://github.com/BeardedManZhao/diskMirror-spring-boot-starter#%E9%85%8D%E7%BD%AE-starter)
+> 所有关于`DiskMirror所需要的配置`
+> 的配置项目，我们可以在 [diskMirror-spring-boot-starter的配置文件中查看到](https://github.com/BeardedManZhao/diskMirror-spring-boot-starter#%E9%85%8D%E7%BD%AE-starter)
 
 | 项目名称                         | 配置值类型     | 解释                                    |
 |------------------------------|-----------|---------------------------------------|
