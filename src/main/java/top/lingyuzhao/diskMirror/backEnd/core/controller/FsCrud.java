@@ -318,8 +318,10 @@ public class FsCrud implements CRUD {
                 }
             }
         } catch (IOException | RuntimeException e) {
-            WebConf.LOGGER.error("getUseSize 函数调用错误!!!", e);
-            return HttpUtils.getResJsonStr(new JSONObject(), e.toString());
+            WebConf.LOGGER.error("setSpaceSk 函数调用错误!!!", e);
+            final JSONObject jsonObject = new JSONObject();
+            jsonObject.put(WebConf.SECURE_KEY, e.toString());
+            return HttpUtils.getResJsonStr(jsonObject, e.toString());
         }
     }
 }
