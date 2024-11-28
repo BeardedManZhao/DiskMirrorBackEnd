@@ -729,3 +729,98 @@ class DiskMirror {
     }
 
 }
+
+/**
+ * webSocket 类处理器！
+ * 可以选择性的将这个类一起使用
+ */
+class DiskMirrorWebSocket {
+    constructor(url) {
+        this.url = url;
+        this.socket = null;
+        this.commandHandlers = {
+            add: null,
+            remove: null,
+            rename: null,
+            get: null,
+            download: null,
+            transferDeposit: null,
+            getAllProgressBar: null,
+            transferDepositStatus: null,
+            mkdirs: null,
+            getSpaceSize: null,
+            setSpaceSize: null,
+            getVersion: null,
+            getUseSize: null,
+            setSpaceSk: null
+        };
+
+        this.initWebSocket();
+    }
+
+    initWebSocket() {
+        this.socket = new WebSocket(this.url);
+
+        this.socket.onopen = (event) => {
+            console.log('WebSocket connection established:', event.target.url);
+        };
+
+        this.socket.onclose = (event) => {
+            console.log('WebSocket connection closed:', event.code, event.reason);
+        };
+
+        this.socket.onerror = (error) => {
+            console.error('WebSocket error:', error);
+        };
+
+        this.socket.onmessage = (message) => {
+            const data = JSON.parse(message.data);
+            const command = data.command;
+
+            if (this.commandHandlers[command]) {
+                this.commandHandlers[command](data);
+            } else {
+                console.warn('Unknown command:', command);
+            }
+        };
+    }
+
+    /**
+     * 向 webSocket 主动发送一个服务
+     * @param command {string} 指定要发送的命令 对应的是服务
+     * @param params 参数！！！
+     */
+    sendCommand(command, params) {
+        const message = params;
+        message.command = command;
+        this.socket.send(JSON.stringify(message));
+    }
+
+    /**
+     * 设置命令处理器
+     * @param command {string} 指定要处理的命令 对应的是服务
+     * @param handler {function} 处理函数，输入是命令对应的参数对象
+     */
+    setCommandHandler(command, handler) {
+        if (this.commandHandlers.hasOwnProperty(command)) {
+            this.commandHandlers[command] = handler;
+        } else {
+            console.warn(`Unknown command: ${command}`);
+        }
+    }
+}
+
+// 使用示例
+// const client = new FsCrudWebSocketClient('ws://your-websocket-url');
+//
+// client.setCommandHandler('add', (data) => {
+//     console.log('Received add command:', data);
+// });
+//
+// client.setCommandHandler('remove', (data) => {
+//     console.log('Received remove command:', data);
+// });
+//
+// // 发送命令
+// client.sendCommand('add', { path: '/path/to/file' });
+// client.sendCommand('remove', { path: '/path/to/file' });

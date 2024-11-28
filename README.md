@@ -28,7 +28,8 @@ url，在诸多场景中可以简化IO相关的实现操作，能够降低开发
 关于配置文件的描述和信息 如下所示
 
 > 所有关于`DiskMirror所需要的配置`
-> 的配置项目，我们可以在 [diskMirror-spring-boot-starter的配置文件中查看到](https://github.com/BeardedManZhao/diskMirror-spring-boot-starter#%E9%85%8D%E7%BD%AE-starter)
+>
+的配置项目，我们可以在 [diskMirror-spring-boot-starter的配置文件中查看到](https://github.com/BeardedManZhao/diskMirror-spring-boot-starter#%E9%85%8D%E7%BD%AE-starter)
 
 | 项目名称                         | 配置值类型     | 解释                                    |
 |------------------------------|-----------|---------------------------------------|
@@ -45,6 +46,7 @@ url，在诸多场景中可以简化IO相关的实现操作，能够降低开发
 | max.upload.size              | long      | 盘镜后端 设置接收数据的最大大小，单位是字节。-1 代表无限        |
 | data.text.charset            | String    | 文本数据处理时需要使用的编码集                       |
 | all.host.control             | jsonArray | 本服务器运行时的跨域允许列表                        |
+| verification.list            | jsonArray | 盘镜后端 设置需要被装载的模块列表                     |
 | diskMirror.mode              | String    | DiskMirror使用的适配器类型                    |
 | SpaceMaxSize                 | json      | config中对于每个用户空间数据容量的配置项目              |
 
@@ -54,24 +56,28 @@ url，在诸多场景中可以简化IO相关的实现操作，能够降低开发
   "fs.defaultFS": "hdfs://127.0.0.1:8020",
   "ok.value": "ok!!!!",
   "resK": "res",
-  "protocol.prefix": "https://xxx.lingyuzhao.top/",
+  "protocol.prefix": "https://diskmirror.lingyuzhao.top/",
   "user.disk.mirror.space.quota": 134217728,
   "params": {},
-  "secure.key": 0,
+  "secure.key": 1001101010,
   "diskMirror.charset": "UTF-8",
   "data.text.charset": "UTF-8",
-  "max.in.memory.size": 4194304,
-  "max.upload.size": 1073741824,
   "all.host.control": [
+    "http://codebook.lingyuzhao.top:8081",
+    "https://codebook.lingyuzhao.top:8081",
     "https://www.lingyuzhao.top",
-    "https://www.lingyuzhao.top/"
+    "https://www.lingyuzhao.top/",
+    "http://blog.lingyuzhao.top:8080/"
+  ],
+  "verification.list":[
+    "SkCheckModule$writer"
   ],
   "diskMirror.mode": "LocalFSAdapter",
   "SpaceMaxSize": {
-    "1": 134217728,
-    "2": 134217728
+    "1": 1342177280
   }
 }
+
 ```
 
 #### 旧版本 - 源码配置 - 下载并修改源码
@@ -290,7 +296,7 @@ public class DiskMirrorMAIN {
 ```xml
 
 <Context docBase="存储文件的真实路径（一般就是 WebConf.ROOT_DIR 对应的值）"
-         path="存储文件的访问路径（一般就是 WebConf.PROTOCOL_PREFIX 对应的值的路径部分）" reloadable="true"/>
+    path="存储文件的访问路径（一般就是 WebConf.PROTOCOL_PREFIX 对应的值的路径部分）" reloadable="true" />
 ```
 
 ##### TomCat 不启用目录映射 使用 JS 下载（二选一）
@@ -460,6 +466,12 @@ diskMirror.setSk(123123, 'xxx.com')
 ```
 
 ## 更新记录与信息（从 2024-03-25 之后开始记录）
+
+### 2024-11-28 版本发布
+
+- 为 DiskMirror 核心组件版本升级到 1.3.4
+- 为 DiskMirror 增加 `verification.list` 配置项
+- 为 DiskMirror 增加 webSocket 的调用支持！【测试阶段】
 
 ### 2024-11-05 版本发布
 

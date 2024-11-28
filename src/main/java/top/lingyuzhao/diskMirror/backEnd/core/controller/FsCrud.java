@@ -1,6 +1,7 @@
 package top.lingyuzhao.diskMirror.backEnd.core.controller;
 
 import com.alibaba.fastjson2.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -36,13 +37,10 @@ public class FsCrud implements CRUD {
     /**
      * 从配置类中获取到适配器对象
      */
-    protected final Adapter adapter;
+    final Adapter adapter;
 
-    /**
-     * 使用 diskMirror 的配置类进行初始化
-     */
     public FsCrud() {
-        this.adapter = DiskMirrorConfig.getAdapter();
+        this(DiskMirrorConfig.getAdapter());
     }
 
     /**
@@ -315,7 +313,9 @@ public class FsCrud implements CRUD {
                         final InputStream inputStream = params.getInputStream()
                 ) {
                     final JSONObject jsonObject = JSONObject.parseObject(IOUtils.getStringByStream(inputStream, DiskMirrorConfig.getOptionString(WebConf.DATA_TEXT_CHARSET)));
-                    return HttpUtils.getResJsonStr(jsonObject, this.adapter.setSpaceSk(jsonObject.getString("userId")));
+                    final int i = this.adapter.setSpaceSk(jsonObject.getString("userId"), jsonObject.getIntValue(WebConf.SECURE_KEY));
+                    jsonObject.put(WebConf.SECURE_KEY, i);
+                    return HttpUtils.getResJsonStr(jsonObject, this.adapter.getConfig().getString(Config.OK_VALUE));
                 }
             }
         } catch (IOException | RuntimeException e) {

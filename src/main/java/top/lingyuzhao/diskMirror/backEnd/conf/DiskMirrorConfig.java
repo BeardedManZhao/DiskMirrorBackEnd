@@ -12,12 +12,17 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import top.lingyuzhao.diskMirror.conf.Config;
 import top.lingyuzhao.diskMirror.core.Adapter;
 import top.lingyuzhao.diskMirror.core.DiskMirror;
+import top.lingyuzhao.diskMirror.core.module.ModuleManager;
+import top.lingyuzhao.diskMirror.core.module.SkCheckModule;
+import top.lingyuzhao.diskMirror.core.module.Verification;
 import top.lingyuzhao.utils.IOUtils;
+import top.lingyuzhao.utils.StrUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Map;
 
 import static top.lingyuzhao.diskMirror.backEnd.conf.WebConf.IO_MODE;
@@ -74,6 +79,8 @@ public final class DiskMirrorConfig implements WebMvcConfigurer {
         // 设置访问 diskMirror 时的密钥，这个密钥可以是数值也可以是字符串类型的对象，最终会根据特有的计算算法获取到一个数值
         // 获取到的数值会再后端服务运行的时候展示再日志中，前端的 diskMirror 的 js 文件中需要需要将这个数值做为key 才可以进行访问
         DiskMirrorConfig.putOption(WebConf.SECURE_KEY, 0);
+        // 设置盘镜要加载的校验模块 以及模式 默认是 空列表
+        DiskMirrorConfig.putOption(WebConf.VERIFICATION_LIST, JSONArray.from(new ArrayList<>()));
         // 设置默认的 diskMirror 组件
         loadDefDiskMirror(false);
 
@@ -83,22 +90,22 @@ public final class DiskMirrorConfig implements WebMvcConfigurer {
         if (diskMirrorConf1 != null) {
             File diskMirrorConf = new File(diskMirrorConf1);
             if (diskMirrorConf.exists()) {
-                WebConf.LOGGER.info("加载配置文件：{}", diskMirrorConf1);
+                LOGGER.info("加载配置文件：{}", diskMirrorConf1);
                 try (FileInputStream fileInputStream = new FileInputStream(diskMirrorConf)) {
                     DiskMirrorConfig.loadConf(JSONObject.parse(IOUtils.getStringByStream(fileInputStream)));
                 } catch (IOException e) {
-                    WebConf.LOGGER.error("配置文件有尝试加载，但是失败了！因此使用默认配置！", e);
+                    LOGGER.error("配置文件有尝试加载，但是失败了！因此使用默认配置！", e);
                 }
             } else {
                 try (FileOutputStream fileOutputStream = new FileOutputStream(diskMirrorConf)) {
                     fileOutputStream.write(DiskMirrorConfig.WEB_CONF.toString().getBytes());
-                    WebConf.LOGGER.info("您设置了配置文件目录为：{}，但是您的配置文件不存在，我们为您创建了默认配置文件！", diskMirrorConf1);
+                    LOGGER.info("您设置了配置文件目录为：{}，但是您的配置文件不存在，我们为您创建了默认配置文件！", diskMirrorConf1);
                 } catch (IOException e) {
-                    WebConf.LOGGER.error("我们无法为您生成配置文件，可能是您指定的路径有目录不存在，或我们无权限创建文件，但我们使用了默认配置文件来运行 diskMirror", e);
+                    LOGGER.error("我们无法为您生成配置文件，可能是您指定的路径有目录不存在，或我们无权限创建文件，但我们使用了默认配置文件来运行 diskMirror", e);
                 }
             }
         } else {
-            WebConf.LOGGER.warn("我们建议您设置一个名为 DiskMirror_CONF 的环境变量，我们期望使用其指向的文件作为配置文件！");
+            LOGGER.warn("我们建议您设置一个名为 DiskMirror_CONF 的环境变量，我们期望使用其指向的文件作为配置文件！");
         }
     }
 
@@ -123,7 +130,7 @@ public final class DiskMirrorConfig implements WebMvcConfigurer {
                 throw new UnsupportedOperationException("SpaceMaxSize 的格式不正确，其应该是一个，String为key类型，Long为value，其代表每个用户空间对应的数据容量！", e);
             }
             // 这个时候才开始真正处理 DiskMirror
-            DiskMirrorConfig.putOption(WebConf.IO_MODE, DiskMirror.valueOf(io_mode.toString()));
+            DiskMirrorConfig.putOption(IO_MODE, DiskMirror.valueOf(io_mode.toString()));
         } else {
             LOGGER.info("public static void loadConf(default) run!!!");
             loadDefDiskMirror(true);
@@ -141,7 +148,7 @@ public final class DiskMirrorConfig implements WebMvcConfigurer {
         if (useReLoad) {
             // 如果在这个时候操作都准备好了（使用 useReLoad 判断是否已经准备好了）
             // 最后就设置后端的IO模式 请确保这个是最后一个配置项目 因为在配置了此项目之后 就会构建适配器
-            DiskMirrorConfig.putOption(WebConf.IO_MODE, DiskMirror.LocalFSAdapter);
+            DiskMirrorConfig.putOption(IO_MODE, DiskMirror.LocalFSAdapter);
         } else {
             // 如果没有准备好就使用这样的函数赋值 这可以不触发 reload
             WEB_CONF.put(IO_MODE, DiskMirror.LocalFSAdapter);
@@ -161,7 +168,10 @@ public final class DiskMirrorConfig implements WebMvcConfigurer {
             case WebConf.SECURE_KEY:
                 WEB_CONF.setSecureKey(value);
                 break;
-            case WebConf.IO_MODE:
+            case WebConf.VERIFICATION_LIST:
+                addVerifications((JSONArray) value);
+                break;
+            case IO_MODE:
                 reload();
                 break;
         }
@@ -198,7 +208,7 @@ public final class DiskMirrorConfig implements WebMvcConfigurer {
      * 重新刷新配置 使其生效 此操作常用于刷新适配器等参数
      */
     public static void reload() {
-        final DiskMirror diskMirror = (DiskMirror) getOption(WebConf.IO_MODE);
+        final DiskMirror diskMirror = (DiskMirror) getOption(IO_MODE);
         LOGGER.info("diskMirror 构建适配器:{}\n{}", diskMirror.toString(), diskMirror.getVersion());
         adapter = diskMirror.getAdapter(WEB_CONF);
     }
@@ -224,6 +234,56 @@ public final class DiskMirrorConfig implements WebMvcConfigurer {
             return ((DiskMirror) orDefault).getVersion();
         }
         return orDefault.toString();
+    }
+
+    /**
+     * 添加一个或多个验证器
+     *
+     * @param jsonArray 验证器数组
+     */
+    private static void addVerifications(JSONArray jsonArray) {
+        jsonArray.forEach(o -> addVerification(o.toString()));
+    }
+
+    /**
+     * 通过字符串命令添加一个验证器
+     *
+     * @param moduleName$loadMode 模块名$加载模式
+     */
+    private static void addVerification(String moduleName$loadMode) {
+        final String[] strings = StrUtils.splitBy(moduleName$loadMode, '$');
+        addVerification(strings[0], strings[1]);
+    }
+
+    /**
+     * 添加一个验证器
+     *
+     * @param moduleName 校验模块的类名字
+     * @param loadMode   验证模块的加载模式
+     */
+    private static void addVerification(String moduleName, String loadMode) {
+        Verification verification = null;
+        // 加载出模块对象
+        if (moduleName.equals("SkCheckModule")) {
+            verification = new SkCheckModule(moduleName, "密钥校验服务");
+        } else {
+            LOGGER.error("未定义的模块：{}", moduleName);
+        }
+        if (verification != null) {
+            // 开始进行模块加载
+            switch (loadMode) {
+                case "read":
+                    ModuleManager.registerModuleRead(verification);
+                    break;
+                case "writer":
+                    ModuleManager.registerModuleWriter(verification);
+                    break;
+                default:
+                    LOGGER.error("未定义的模块加载模式：{}", loadMode);
+                    return;
+            }
+        }
+        LOGGER.info("已加载 {} 模块：{}", loadMode, moduleName);
     }
 
     /**
@@ -258,5 +318,4 @@ public final class DiskMirrorConfig implements WebMvcConfigurer {
         // 返回配置好的CommonsMultipartResolver实例
         return resolver;
     }
-
 }

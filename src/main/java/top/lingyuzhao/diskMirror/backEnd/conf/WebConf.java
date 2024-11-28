@@ -29,6 +29,11 @@ public final class WebConf extends Config {
      * 盘镜后端 设置接收数据时 可在内存中存储的数据容量 超出则会临时存在磁盘中
      */
     public static final String MAX_IN_MEMORY_SIZE = "max.in.memory.size";
+
+    /**
+     * 要使用的校验模块！
+     */
+    public static final String VERIFICATION_LIST = "verification.list";
     /**
      * 日志控制器
      */
