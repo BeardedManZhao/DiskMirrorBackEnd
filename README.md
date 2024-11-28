@@ -472,6 +472,7 @@ diskMirror.setSk(123123, 'xxx.com')
 - 为 DiskMirror 核心组件版本升级到 1.3.4
 - 为 DiskMirror 增加 `verification.list` 配置项
 - 为 DiskMirror 增加 webSocket 的调用支持！【测试阶段】
+- 修正配置文件 日志目录的问题
 
 ### 2024-11-05 版本发布
 

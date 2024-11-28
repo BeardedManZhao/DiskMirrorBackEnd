@@ -19,7 +19,7 @@
         </Console>
 
         <!-- 使用随机读写流的日志文件输出 appender，性能提高 -->
-        <RandomAccessFile name="accessFile" fileName="${DiskMirror_CONF}/logs/DiskMirrorBackEnd.log">
+        <RandomAccessFile name="accessFile" fileName="logs/DiskMirrorBackEnd.log">
             <PatternLayout pattern="[%p][%c][%d{yy-MM-dd:hh:mm:ss}]] : %m%n"/>
         </RandomAccessFile>
     </Appenders>
