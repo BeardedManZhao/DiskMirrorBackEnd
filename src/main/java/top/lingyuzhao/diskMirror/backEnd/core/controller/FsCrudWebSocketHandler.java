@@ -66,7 +66,7 @@ public class FsCrudWebSocketHandler extends TextWebSocketHandler {
                 handleSetSpaceSize(session, params);
                 break;
             case "getVersion":
-                handleGetVersion(session, params);
+                handleGetVersion(session);
                 break;
             case "getUseSize":
                 handleGetUseSize(session, params);
@@ -154,10 +154,9 @@ public class FsCrudWebSocketHandler extends TextWebSocketHandler {
         session.sendMessage(new TextMessage(HttpUtils.getResJsonStr(params, "设置成功")));
     }
 
-    private void handleGetVersion(WebSocketSession session, JSONObject params) throws IOException {
+    private void handleGetVersion(WebSocketSession session) throws IOException {
         // 处理 getVersion 命令
-        String result = adapter.version();
-        session.sendMessage(new TextMessage(result));
+        session.sendMessage(new TextMessage(adapter.version()));
     }
 
     private void handleGetUseSize(WebSocketSession session, JSONObject params) throws IOException {
@@ -174,17 +173,17 @@ public class FsCrudWebSocketHandler extends TextWebSocketHandler {
     }
 
     @Override
-    public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+    public void afterConnectionEstablished(WebSocketSession session) {
         // 连接建立后的处理
     }
 
     @Override
-    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
         // 连接关闭后的处理
     }
 
     @Override
-    public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
+    public void handleTransportError(WebSocketSession session, Throwable exception) {
         // 处理传输错误
         WebConf.LOGGER.error("webSocket 传输错误: ", exception);
     }
