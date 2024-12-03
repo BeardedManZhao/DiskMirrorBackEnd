@@ -5,6 +5,49 @@
 class DiskMirror {
 
     /**
+     * 通过异或算法加密
+     * @param value {number} 要加密的字符串
+     * @return {number} 加密后的结果
+     */
+    static xorEncrypt(value) {
+        let encrypted = value;
+        const sk_str = value.toString();
+        for (let i = 0; i < sk_str.length; i++) {
+            encrypted -= sk_str.charCodeAt(i) << 1;
+        }
+        return encrypted;
+    }
+
+    /**
+     * 在一些操作中，我们可能需要将 sk 包含在 cookie 中，因此可能会需要使用这个函数，这个函数一般来说不需要用户手动调用！
+     *
+     * 因为在设置好 sk 的时候，它会自动被调用！请勿随意修改此函数带来的cookie，某些后端服务会使用到！
+     *
+     * @param domain {string} 需要被设置的cookie的域名 默认是当前域
+     * @param dm {DiskMirror | DiskMirrorWebSocket} 盘镜对象，用于获取到当前盘镜的sk
+     */
+    static setDiskMirrorXorSecureKey(domain, dm) {
+        // 检查名为 diskMirror_xor_secure_key 的 cookie 是否存在
+        const cookieName = 'diskMirror_xor_secure_key';
+        // 如果存在就更新 cookie 的值
+        const encryptedValue = DiskMirror.xorEncrypt(dm.getSk());
+        if (DiskMirror.isSetCookie && DiskMirror.cookieValue === encryptedValue && DiskMirror.cookieDoMain === domain) {
+            // 如果设置过 cookie 且 值 和 域 相同 则这里就不继续更新 cookie 了
+            return;
+        }
+        if (domain) {
+            document.cookie = `${cookieName}=${encryptedValue};path=/;domain=${domain}`;
+            return;
+        }
+        document.cookie = `${cookieName}=${encryptedValue};path=/`;
+        // 标记 cookie 信息
+        DiskMirror.isSetCookie = true;
+        DiskMirror.cookieValue = encryptedValue;
+        DiskMirror.cookieDoMain = domain;
+    }
+
+
+    /**
      * 获取到盘镜对象
      * @param url {string} 盘镜后端服务器后端的url
      */
@@ -13,20 +56,6 @@ class DiskMirror {
         this.diskMirrorUrl = url; // This is the diskMirrorUrl variable
         this.setSk();
         this.setController('/FsCrud');
-    }
-
-    /**
-     * 通过异或算法加密
-     * @param value {number} 要加密的字符串
-     * @return {number} 加密后的结果
-     */
-    xorEncrypt(value) {
-        let encrypted = value;
-        const sk_str = this.sk.toString();
-        for (let i = 0; i < sk_str.length; i++) {
-            encrypted -= sk_str.charCodeAt(i) << 1;
-        }
-        return encrypted;
     }
 
     /**
@@ -53,7 +82,7 @@ class DiskMirror {
     setSk(key = 0, domain = undefined) {
         this.sk = key;
         if (key !== 0) {
-            this.setDiskMirrorXorSecureKey(domain);
+            DiskMirror.setDiskMirrorXorSecureKey(domain, this);
         }
     }
 
@@ -655,33 +684,6 @@ class DiskMirror {
     }
 
     /**
-     * 在一些操作中，我们可能需要将 sk 包含在 cookie 中，因此可能会需要使用这个函数，这个函数一般来说不需要用户手动调用！
-     *
-     * 因为在设置好 sk 的时候，它会自动被调用！请勿随意修改此函数带来的cookie，某些后端服务会使用到！
-     *
-     * @param domain {string} 需要被设置的cookie的域名 默认是当前域
-     */
-    setDiskMirrorXorSecureKey(domain) {
-        // 检查名为 diskMirror_xor_secure_key 的 cookie 是否存在
-        const cookieName = 'diskMirror_xor_secure_key';
-        // 如果存在就更新 cookie 的值
-        const encryptedValue = this.xorEncrypt(this.getSk());
-        if (this.isSetCookie && this.cookieValue === encryptedValue && this.cookieDoMain === domain) {
-            // 如果设置过 cookie 且 值 和 域 相同 则这里就不继续更新 cookie 了
-            return;
-        }
-        if (domain) {
-            document.cookie = `${cookieName}=${encryptedValue};path=/;domain=${domain}`;
-            return;
-        }
-        document.cookie = `${cookieName}=${encryptedValue};path=/`;
-        // 标记 cookie 信息
-        this.isSetCookie = true;
-        this.cookieValue = encryptedValue;
-        this.cookieDoMain = domain;
-    }
-
-    /**
      * 获取指定空间的所有的进度条
      * @param userId {int|string} 指定要获取到的文件进度数据对应的空间id
      * @param okFun {function} 操作成功之后的回调函数 输入是被文件进度的json对象
@@ -737,22 +739,23 @@ class DiskMirror {
 class DiskMirrorWebSocket {
     constructor(url) {
         this.url = url;
+        const defFun = {
+            okFun: d => console.info(d),
+            errorFun: e => console.error(e)
+        }
         this.socket = null;
         this.commandHandlers = {
-            add: null,
-            remove: null,
-            rename: null,
-            get: null,
-            download: null,
-            transferDeposit: null,
-            getAllProgressBar: null,
-            transferDepositStatus: null,
-            mkdirs: null,
-            getSpaceSize: null,
-            setSpaceSize: null,
-            getVersion: null,
-            getUseSize: null,
-            setSpaceSk: null
+            remove: defFun,
+            reName: defFun,
+            getUrls: defFun,
+            transferDeposit: defFun,
+            getAllProgressBar: defFun,
+            transferDepositStatus: defFun,
+            mkdirs: defFun,
+            getSpaceSize: defFun,
+            getVersion: defFun,
+            getUseSize: defFun,
+            default: defFun
         };
 
         this.initWebSocket();
@@ -776,13 +779,42 @@ class DiskMirrorWebSocket {
         this.socket.onmessage = (message) => {
             const data = JSON.parse(message.data);
             const command = data.command;
-
-            if (this.commandHandlers[command]) {
-                this.commandHandlers[command](data);
-            } else {
+            if (!data.data) {
+                console.warn('No data in message:', message);
+                return;
+            }
+            if (!this.commandHandlers[command]) {
                 console.warn('Unknown command:', command);
+                this.commandHandlers.default.errorFun(data.data);
+                return;
+            }
+            if (data.data['res'] === undefined || data.data['res'] === 'ok!!!!') {
+                // 如果是 ok 或者 无校验码 则认为其正确
+                this.commandHandlers[command].okFun(data.data);
+            } else {
+                this.commandHandlers[command].errorFun(data.data);
             }
         };
+    }
+
+    /**
+     * 设置本组件使用的盘镜的 安全key
+     * @param key {int} 此key 用于标识您的身份，让服务器相信您，且允许您访问，需要设置与服务器相同
+     * @param domain {string} 您希望在哪个域下使用此安全密钥？默认情况下，此值是 undefined，表示您希望在当前域下使用此安全密钥，值得注意是，请确保您的盘镜后端服务器在此域下哦！因为您要携带这个cookie 访问后端呢！
+     */
+    setSk(key = 0, domain = undefined) {
+        this.sk = key;
+        if (key !== 0) {
+            DiskMirror.setDiskMirrorXorSecureKey(domain, this);
+        }
+    }
+
+    /**
+     * 获取本组件使用的盘镜的 安全key
+     * @return {int} 安全密钥 如果目标 diskMirror 服务器需要密钥访问，则您需要在这里设置密钥
+     */
+    getSk() {
+        return this.sk;
     }
 
     /**
@@ -793,34 +825,24 @@ class DiskMirrorWebSocket {
     sendCommand(command, params) {
         const message = params;
         message.command = command;
+        params["secure.key"] = this.getSk();
         this.socket.send(JSON.stringify(message));
     }
 
     /**
      * 设置命令处理器
      * @param command {string} 指定要处理的命令 对应的是服务
-     * @param handler {function} 处理函数，输入是命令对应的参数对象
+     * @param okFun {function} 如果没有发生错误 则会调用此函数，输入是操作结果。
+     * @param errorFun {function} 如果发生错误 则会调用此函数，输入是错误信息。
      */
-    setCommandHandler(command, handler) {
+    setCommandHandler(command, okFun, errorFun) {
         if (this.commandHandlers.hasOwnProperty(command)) {
-            this.commandHandlers[command] = handler;
+            this.commandHandlers[command] = {
+                okFun: okFun,
+                errorFun: errorFun
+            }
         } else {
             console.warn(`Unknown command: ${command}`);
         }
     }
 }
-
-// 使用示例
-// const client = new FsCrudWebSocketClient('ws://your-websocket-url');
-//
-// client.setCommandHandler('add', (data) => {
-//     console.log('Received add command:', data);
-// });
-//
-// client.setCommandHandler('remove', (data) => {
-//     console.log('Received remove command:', data);
-// });
-//
-// // 发送命令
-// client.sendCommand('add', { path: '/path/to/file' });
-// client.sendCommand('remove', { path: '/path/to/file' });

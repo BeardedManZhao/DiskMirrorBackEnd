@@ -26,6 +26,7 @@
     </style>
 </head>
 <body>
+<script src="js/diskMirror.min.js"></script>
 <div>
     <pre id="res_show"><%=DiskMirrorConfig.getVersion()%></pre>
 </div>

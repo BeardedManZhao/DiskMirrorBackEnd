@@ -294,14 +294,15 @@ public final class DiskMirrorConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         final JSONArray jsonArray = WEB_CONF.getJSONArray(WebConf.ALL_HOST_CONTROL);
-        LOGGER.info("盘镜 后端启动，允许跨域列表：{}", jsonArray);
-        LOGGER.info("盘镜 后端加载配置，安全密钥：{}", WEB_CONF.getSecureKey());
+        LOGGER.info("盘镜 后端 MvcHttp 启动，允许跨域列表：{}", jsonArray);
+        LOGGER.info("盘镜 后端 MvcHttp 加载配置，安全密钥：{}", WEB_CONF.getSecureKey());
         registry.addMapping("/**")
                 .allowedHeaders("*")
                 .allowedOrigins(jsonArray.stream().map(Object::toString).toArray(String[]::new))
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowCredentials(true)
                 .maxAge(3600);
+        WebConf.LOGGER.info("diskMirror MvcHttp 处理器生效。");
     }
 
     // 定义一个CommonsMultipartResolver Bean，用于处理文件上传

@@ -12,6 +12,11 @@ import top.lingyuzhao.diskMirror.core.Adapter;
 
 import java.io.IOException;
 
+/**
+ * 文件系统的增删操作接口
+ *
+ * @author zhao
+ */
 public class FsCrudWebSocketHandler extends TextWebSocketHandler {
 
     private final Adapter adapter;
@@ -24,6 +29,21 @@ public class FsCrudWebSocketHandler extends TextWebSocketHandler {
         this.adapter = adapter;
     }
 
+    /**
+     * 处理响应 确保其中带有来源的 command 标识
+     *
+     * @param command 处理的来源
+     * @param res     响应结果
+     * @return 结果的 TextMessage 对象
+     */
+    private static TextMessage handleRes(String command, JSONObject res) {
+        return new TextMessage(String.format("{\"command\": \"%s\", \"data\": %s}", command, res.toJSONString()));
+    }
+
+    private static TextMessage handleRes(String command, long res) {
+        return new TextMessage(String.format("{\"command\": \"%s\", \"data\": %s}", command, res));
+    }
+
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         String payload = message.getPayload();
@@ -32,16 +52,16 @@ public class FsCrudWebSocketHandler extends TextWebSocketHandler {
         // 处理不同的命令
         String command = params.getString("command");
         switch (command) {
-            case "add":
+            case "upload":
                 handleAdd(session, params);
                 break;
             case "remove":
                 handleRemove(session, params);
                 break;
-            case "rename":
+            case "reName":
                 handleRename(session, params);
                 break;
-            case "get":
+            case "getUrls":
                 handleGet(session, params);
                 break;
             case "download":
@@ -62,49 +82,34 @@ public class FsCrudWebSocketHandler extends TextWebSocketHandler {
             case "getSpaceSize":
                 handleGetSpaceSize(session, params);
                 break;
-            case "setSpaceSize":
-                handleSetSpaceSize(session, params);
-                break;
-            case "getVersion":
-                handleGetVersion(session);
-                break;
             case "getUseSize":
                 handleGetUseSize(session, params);
                 break;
-            case "setSpaceSk":
-                handleSetSpaceSk(session, params);
-                break;
             default:
-                session.sendMessage(new TextMessage(HttpUtils.getResJsonStr(new JSONObject(), "未知命令")));
+                session.sendMessage(new TextMessage(HttpUtils.getResJsonStr(new JSONObject(), "未知命令:" + command)));
                 break;
         }
     }
 
     private void handleAdd(WebSocketSession session, JSONObject params) throws IOException {
-        // 处理 add 命令
-        // 这里需要处理文件上传，可以考虑将文件上传部分单独封装成一个方法
-        // 示例代码：
-        // String result = adapter.upload(inputStream, params);
-        // session.sendMessage(new TextMessage(result));
-        session.sendMessage(new TextMessage(HttpUtils.getResJsonStr(params, "不支持此操作：add")));
+        session.sendMessage(new TextMessage(HttpUtils.getResJsonStr(params, "不支持此操作：upload")));
     }
 
     private void handleRemove(WebSocketSession session, JSONObject params) throws IOException {
         // 处理 remove 命令
-        String result = adapter.remove(params).toString();
-        session.sendMessage(new TextMessage(result));
+        session.sendMessage(handleRes("remove", adapter.remove(params)));
+        // 由于是修改 因此一并返回修改之后的字节
+        session.sendMessage(handleRes("getUseSize", adapter.getUseSize(params)));
     }
 
     private void handleRename(WebSocketSession session, JSONObject params) throws IOException {
         // 处理 rename 命令
-        String result = adapter.reName(params).toString();
-        session.sendMessage(new TextMessage(result));
+        session.sendMessage(handleRes("reName", adapter.reName(params)));
     }
 
     private void handleGet(WebSocketSession session, JSONObject params) throws IOException {
         // 处理 get 命令
-        String result = adapter.getUrls(params).toString();
-        session.sendMessage(new TextMessage(result));
+        session.sendMessage(handleRes("getUrls", adapter.getUrls(params)));
     }
 
     private void handleDownload(WebSocketSession session, JSONObject params) throws IOException {
@@ -118,58 +123,35 @@ public class FsCrudWebSocketHandler extends TextWebSocketHandler {
 
     private void handleTransferDeposit(WebSocketSession session, JSONObject params) throws IOException {
         // 处理 transferDeposit 命令
-        String result = adapter.transferDeposit(params).toString();
-        session.sendMessage(new TextMessage(result));
+        session.sendMessage(handleRes("transferDeposit", adapter.transferDeposit(params)));
+        session.sendMessage(handleRes("getUseSize", adapter.getUseSize(params)));
     }
 
     private void handleGetAllProgressBar(WebSocketSession session, JSONObject params) throws IOException {
         // 处理 getAllProgressBar 命令
-        String result = adapter.getAllProgressBar(params.getString("id")).toString();
-        session.sendMessage(new TextMessage(result));
+        session.sendMessage(handleRes("getAllProgressBar", adapter.getAllProgressBar(params.getString("userId"))));
     }
 
     private void handleTransferDepositStatus(WebSocketSession session, JSONObject params) throws IOException {
         // 处理 transferDepositStatus 命令
-        String result = adapter.transferDepositStatus(params).toString();
-        session.sendMessage(new TextMessage(result));
+        session.sendMessage(handleRes("transferDepositStatus", adapter.transferDepositStatus(params)));
     }
 
     private void handleMkdirs(WebSocketSession session, JSONObject params) throws IOException {
         // 处理 mkdirs 命令
-        String result = adapter.mkdirs(params).toString();
-        session.sendMessage(new TextMessage(result));
+        session.sendMessage(handleRes("mkdirs", adapter.mkdirs(params)));
     }
 
+    // data 无校验码
     private void handleGetSpaceSize(WebSocketSession session, JSONObject params) throws IOException {
         // 处理 getSpaceSize 命令
-        String result = String.valueOf(adapter.getSpaceMaxSize(params.getString("spaceId")));
-        session.sendMessage(new TextMessage(result));
+        session.sendMessage(handleRes("getSpaceSize", adapter.getSpaceMaxSize(params.getString("userId"))));
     }
 
-    private void handleSetSpaceSize(WebSocketSession session, JSONObject params) throws IOException {
-        // 处理 setSpaceSize 命令
-        String userId = params.getString("userId");
-        Long newSize = params.getLong("newSize");
-        adapter.setSpaceMaxSize(userId, newSize);
-        session.sendMessage(new TextMessage(HttpUtils.getResJsonStr(params, "设置成功")));
-    }
-
-    private void handleGetVersion(WebSocketSession session) throws IOException {
-        // 处理 getVersion 命令
-        session.sendMessage(new TextMessage(adapter.version()));
-    }
-
+    // data 无校验码
     private void handleGetUseSize(WebSocketSession session, JSONObject params) throws IOException {
         // 处理 getUseSize 命令
-        String result = String.valueOf(adapter.getUseSize(params));
-        session.sendMessage(new TextMessage(result));
-    }
-
-    private void handleSetSpaceSk(WebSocketSession session, JSONObject params) throws IOException {
-        // 处理 setSpaceSk 命令
-        String userId = params.getString("userId");
-        String result = String.valueOf(adapter.setSpaceSk(userId));
-        session.sendMessage(new TextMessage(result));
+        session.sendMessage(handleRes("getUseSize", adapter.getUseSize(params)));
     }
 
     @Override

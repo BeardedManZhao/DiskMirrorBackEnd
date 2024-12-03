@@ -23,8 +23,9 @@ public class DiskMirrorInit extends AbstractDispatcherServletInitializer {
     protected WebApplicationContext createServletApplicationContext() {
         // 初始化容器对象
         final AnnotationConfigWebApplicationContext webApplicationContext = new AnnotationConfigWebApplicationContext();
-        // 将配置类注册到容器对象中
+        // 将配置类注册到容器对象中 第一个是 MvcHttp 处理器 第二个是 websocket 处理器
         webApplicationContext.register(DiskMirrorConfig.class);
+        webApplicationContext.register(DiskMirrorWebSocketConfig.class);
         // 返回容器对象
         return webApplicationContext;
     }

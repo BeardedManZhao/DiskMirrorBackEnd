@@ -462,9 +462,78 @@ diskMirror.setSk(123123, 'xxx.com')
 </html>
 ```
 
+## webSocket 操作
+
+```javascript
+// 实例化 diskMirror 的 JS Socket 客户端 值得注意的是 webSocket 和 http 不一样 是长连接 因此 url 在这里要提供全！
+const diskMirrorWebSocket = new DiskMirrorWebSocket("wss://xxx.xxx.xxx/socketFsCrud");
+
+// 设置当服务器返回数据的时候的操作 （如果不设置也会有默认的）
+diskMirrorWebSocket.setCommandHandler("getUseSize", (data) => console.log(data), (data) => console.error(data))
+
+// 设置 sk
+diskMirrorWebSocket.setSk(651682360);
+
+// 定时器是确保 diskMirrorWebSocket 已经连接上服务器
+setTimeout(() => {
+    // 客户端可以主动推送操作给服务器 这个操作将会主动让服务器返回数据
+    // 删除一个文件
+    diskMirrorWebSocket.sendCommand("remove", {
+        userId: 4,
+        type: "Binary",
+        fileName: "/img.png"
+    });
+    // 重命名一个文件
+    diskMirrorWebSocket.sendCommand("reName", {
+        userId: 4,
+        type: "Binary",
+        oldName: "she.sh",
+        fileName: "she1.sh"
+    });
+    // 获取到文件目录树结构
+    diskMirrorWebSocket.sendCommand("getUrls", {
+        userId: 4,
+        type: "Binary"
+    });
+    // 将一个 url 中的文件数据转存下载到盘镜
+    diskMirrorWebSocket.sendCommand("transferDeposit", {
+        userId: 4,
+        type: "Binary",
+        fileName: "textIndexCm.html",
+        url: "https://www.lingyuzhao.top"
+    });
+    // 获取到所有进度条
+    diskMirrorWebSocket.sendCommand("getAllProgressBar", {
+        userId: 4,
+        type: "Binary"
+    });
+    // 获取到所有处于转存状态的文件信息
+    diskMirrorWebSocket.sendCommand("transferDepositStatus", {
+        userId: 4,
+        type: "Binary"
+    });
+    // 创建一个文件夹
+    diskMirrorWebSocket.sendCommand("mkdirs", {
+        userId: 4,
+        type: "Binary",
+        fileName: "/newnewenw"
+    });
+    // 获取到当前用户最大空间
+    diskMirrorWebSocket.sendCommand("getSpaceSize", {
+        userId: 4,
+        type: "Binary"
+    });
+    // 获取到当前用户已使用空间
+    diskMirrorWebSocket.sendCommand("getUseSize", {
+        userId: 4,
+        type: "Binary"
+    })
+}, 2000);
+```
+
 ## 更新记录与信息（从 2024-03-25 之后开始记录）
 
-### 2024-11-29 版本发布
+### 2024-12-03 版本发布
 
 - 为 DiskMirror 核心组件版本升级到 1.3.5
 - 为 DiskMirror 增加 `verification.list` 配置项
