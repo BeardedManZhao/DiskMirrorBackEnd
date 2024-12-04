@@ -68,7 +68,7 @@ public interface CRUD {
      * @param sk                  操作的时候需要的密钥，此密钥可以不进行加密，当cookie获取不到的时候，才会调用此密钥！
      */
     @RequestMapping(
-            value = "/downLoad/{userId:\\d+}/{type:[a-zA-Z]+}",
+            value = "/downLoad/{userId:-*\\d+}/{type:[a-zA-Z]+}",
             method = {RequestMethod.GET, RequestMethod.POST},
             produces = MediaType.APPLICATION_OCTET_STREAM_VALUE
     )
