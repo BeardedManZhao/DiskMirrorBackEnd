@@ -273,7 +273,7 @@ public class FsCrud implements CRUD {
                 }
             }
         } catch (IOException | RuntimeException e) {
-            WebConf.LOGGER.error("mkdirs 函数调用错误!!!", e);
+            WebConf.LOGGER.error("setSpaceSize 函数调用错误!!!", e);
             return HttpUtils.getResJsonStr(new JSONObject(), e.toString());
         }
     }
