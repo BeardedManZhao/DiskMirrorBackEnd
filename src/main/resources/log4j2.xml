@@ -1,36 +1,49 @@
-<?xml version="1.0" encoding="UTF-8" ?><!--
-    status="warn" 日志框架本身的输出日志级别，可以修改为debug
-    monitorInterval="5" 自动加载配置文件的间隔时间，不低于 5秒；生产环境中修改配置文件，是热更新，无需重启应用
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+    status="warn": 设置 Log4j2 框架自身的日志级别为警告级别。可以修改为 "debug" 以获取更详细的框架内部日志信息。
+    monitorInterval="5": 配置文件的自动重新加载间隔时间，单位为秒。最小值为 5 秒。在生产环境中，修改配置文件后，应用会自动重新加载配置，无需重启。
+ status="warn": 设置 Log4j2 框架自身的日志级别为警告级别。可以修改为 "debug" 以获取更详细的框架内部日志信息。
+monitorInterval="5": 配置文件的自动重新加载间隔时间，单位为秒。最小值为 5 秒。在生产环境中，修改配置文件后，应用会自动重新加载配置，无需重启。
+<properties>: 集中配置属性进行管理，使用时通过 ${name} 引用属性值。
+<Console>: 控制台输出 appender，target="SYSTEM_OUT" 表示输出到控制台的标准输出流，颜色为黑色；target="SYSTEM_ERR" 表示输出到控制台的错误输出流，颜色为红色。
+<RandomAccessFile>: 使用随机读写流的日志文件输出 appender，性能更高。fileName="logs/DiskMirrorBackEnd.log" 指定日志文件的路径和名称。
+<Logger>: Logger 定义，name="top.lingyuzhao.diskMirror.backEnd" 指定应用的包名，用于匹配日志记录器；level="info" 设置日志级别为 info，低于此级别的日志将不会被记录；additivity="false" 关闭日志继承，避免日志重复输出。
+
  -->
-<configuration monitorInterval="5" status="warn">
-    <!--    &lt;!&ndash;-->
-    <!--    集中配置属性进行管理-->
-    <!--    使用时通过:${name}-->
-    <!--    &ndash;&gt;-->
-    <!--    <properties>-->
-    <!--        <property name="LOG_HOME">./logs</property>-->
-    <!--    </properties>-->
+<configuration status="warn">
+    <!--
+    集中配置属性进行管理
+    使用时通过 ${name} 引用属性值
+    例如：${LOG_HOME}
+    -->
+    <!--
+    <properties>
+        <property name="LOG_HOME">./logs</property>
+    </properties>
+    -->
 
     <!-- 日志处理 -->
     <Appenders>
-        <!-- 控制台输出 appender，SYSTEM_OUT输出黑色，SYSTEM_ERR输出红色 -->
+        <!-- 控制台输出 appender -->
+        <!-- target="SYSTEM_OUT" 表示输出到控制台的标准输出流，颜色为黑色 -->
+        <!-- target="SYSTEM_ERR" 表示输出到控制台的错误输出流，颜色为红色 -->
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout pattern="[%p][%c][%d{yy-MM-dd:hh}]] : %m%n"/>
         </Console>
 
-        <!-- 使用随机读写流的日志文件输出 appender，性能提高 -->
+        <!-- 使用随机读写流的日志文件输出 appender，性能更高 -->
+        <!-- fileName="logs/DiskMirrorBackEnd.log" 指定日志文件的路径和名称 -->
         <RandomAccessFile name="accessFile" fileName="logs/DiskMirrorBackEnd.log">
             <PatternLayout pattern="[%p][%c][%d{yy-MM-dd:hh:mm:ss}]] : %m%n"/>
         </RandomAccessFile>
     </Appenders>
 
-    <!-- logger 定义 -->
-    <Loggers>
-        <!-- 使用 rootLogger 配置 日志级别 level="info" -->
-        <Root level="info">
-            <!-- 指定日志使用的处理器 -->
-            <AppenderRef ref="Console"/>
-            <AppenderRef ref="accessFile"/>
-        </Root>
-    </Loggers>
+    <!-- Logger 定义 -->
+    <!-- name="top.lingyuzhao.diskMirror.backEnd" 指定应用的包名，用于匹配日志记录器 -->
+    <!-- level="info" 设置日志级别为 info，低于此级别的日志将不会被记录 -->
+    <!-- additivity="false" 关闭日志继承，避免日志重复输出 -->
+    <Logger name="top.lingyuzhao.diskMirror.backEnd" level="info" additivity="false">
+        <AppenderRef ref="Console"/> <!-- 引用控制台输出 appender -->
+        <AppenderRef ref="accessFile"/> <!-- 引用文件输出 appender -->
+    </Logger>
 </configuration>
