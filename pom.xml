@@ -5,7 +5,7 @@
 
     <groupId>io.github.BeardedManZhao</groupId>
     <artifactId>DiskMirrorBackEnd</artifactId>
-    <version>2024.12.03</version>
+    <version>2024.12.05</version>
     <packaging>jar</packaging>
     <name>diskMirror</name>
     <description>diskMirror-java</description>
@@ -17,6 +17,30 @@
     </properties>
 
     <dependencies>
+        <!-- 导入 Java Servlet 的依赖 -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>4.0.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- 导入 Spring MVC 的依赖 -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <version>5.2.10.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-websocket</artifactId>
+            <version>5.2.10.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-messaging</artifactId>
+            <version>5.2.10.RELEASE</version>
+        </dependency>
+
         <!-- Binding using the adapter of log4j2 -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
@@ -24,7 +48,6 @@
             <version>2.19.0</version>
             <scope>provided</scope>
         </dependency>
-
         <!-- Log4j2 log facade -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
@@ -50,23 +73,6 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>2.6</version> <!-- 确保版本号正确 -->
-        </dependency>
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>4.0.1</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-webmvc</artifactId>
-            <version>5.2.10.RELEASE</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-websocket</artifactId>
-            <version>5.2.10.RELEASE</version>
         </dependency>
         <dependency>
             <groupId>io.github.BeardedManZhao</groupId>
