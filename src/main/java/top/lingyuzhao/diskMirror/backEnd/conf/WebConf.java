@@ -37,7 +37,7 @@ public final class WebConf extends Config {
     /**
      * 日志控制器
      */
-    public static final Logger LOGGER = LoggerFactory.getLogger("DiskMirrorBackEnd");
+    public static final Logger LOGGER = LoggerFactory.getLogger("top.lingyuzhao.diskMirror.backEnd");
 
     @Override
     public String toString() {

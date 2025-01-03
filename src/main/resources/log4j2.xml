@@ -14,29 +14,22 @@
 
     <!-- 日志处理 -->
     <Appenders>
-        <!-- 控制台输出 appender，SYSTEM_OUT输出黑色，SYSTEM_ERR输出红色 -->
-        <Console name="Console" target="SYSTEM_OUT">
-            <PatternLayout pattern="[%p][%c][%d{yy-MM-dd:hh:mm:ss}]] : %msg%n"/>
-        </Console>
-
         <!-- 使用随机读写流的日志文件输出 appender，性能提高 -->
-        <RandomAccessFile name="accessFile" fileName="logs/DiskMirrorBackEnd.log">
-            <PatternLayout pattern="[%p][%c][%d{yy-MM-dd:hh:mm:ss}]] : %msg%n"/>
+        <RandomAccessFile name="codeBookMblAccessFile" fileName="logs/DiskMirrorBackEnd.log">
+            <PatternLayout pattern="[%p][%c][%d{yy-MM-dd:HH:mm:ss}]] : %msg%n" />
         </RandomAccessFile>
     </Appenders>
 
     <!-- Logger 定义 -->
     <Loggers>
-        <!-- name 标记的是 应用的包 -->
-        <Logger name="top.lingyuzhao.diskMirror.backEnd" level="info" additivity="false">
-            <AppenderRef ref="Console"/>
-            <AppenderRef ref="accessFile"/>
+        <!-- name 标记的是 应用的包 获取日志器的时候 只要是这个名字的日志对象 都会受到这个配置的管束 -->
+        <Logger name="top.lingyuzhao.diskMirror.backEnd" additivity="false" level="info">
+            <AppenderRef ref="codeBookMblAccessFile" />
         </Logger>
 
-        <!-- Root Logger 定义 -->
-        <Root level="info">
-            <AppenderRef ref="Console"/>
-            <AppenderRef ref="accessFile"/>
+        <!-- Root Logger 不再引用其他 Appender -->
+        <Root level="off">
+            <!-- 移除了所有 Appender 引用 -->
         </Root>
     </Loggers>
 </configuration>
