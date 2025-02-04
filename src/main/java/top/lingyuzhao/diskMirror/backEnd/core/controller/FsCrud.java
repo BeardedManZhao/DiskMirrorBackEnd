@@ -265,10 +265,11 @@ public class FsCrud implements CRUD {
                     final JSONObject jsonObject = JSONObject.parseObject(IOUtils.getStringByStream(inputStream, DiskMirrorConfig.getOptionString(WebConf.DATA_TEXT_CHARSET)));
                     final Object userId = jsonObject.get("userId");
                     final Long newSize = jsonObject.getLong("newSize");
+                    final int sk = jsonObject.getIntValue(WebConf.SECURE_KEY);
                     if (userId == null || newSize == null) {
                         throw new UnsupportedOperationException("请求参数不合规，请确保您在调用 setSpaceSize 函数的参数中设置了 userId and newSize， error:" + jsonObject);
                     }
-                    adapter.setSpaceMaxSize(userId.toString(), newSize);
+                    adapter.setSpaceMaxSize(userId.toString(), newSize, sk);
                     return HttpUtils.getResJsonStr(jsonObject, this.adapter.getConfig().getString(Config.OK_VALUE));
                 }
             }
