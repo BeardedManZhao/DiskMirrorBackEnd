@@ -1,5 +1,5 @@
 <component name="ArtifactManager">
-  <artifact type="exploded-war" build-on-make="true" name="DiskMirrorBackEnd:war exploded">
+  <artifact type="exploded-war" name="DiskMirrorBackEnd:war exploded">
     <output-path>$PROJECT_DIR$/out/artifacts/DiskMirrorBackEnd_war_exploded</output-path>
     <root id="root">
       <element id="directory" name="WEB-INF">
@@ -15,13 +15,14 @@
           <element id="library" level="project" name="Maven: org.springframework:spring-jcl:5.2.10.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework:spring-expression:5.2.10.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework:spring-web:5.2.10.RELEASE" />
+          <element id="library" level="project" name="Maven: org.springframework:spring-websocket:5.2.10.RELEASE" />
+          <element id="library" level="project" name="Maven: org.springframework:spring-messaging:5.2.10.RELEASE" />
           <element id="library" level="project" name="Maven: commons-fileupload:commons-fileupload:1.4" />
           <element id="library" level="project" name="Maven: commons-io:commons-io:2.6" />
-          <element id="library" level="project" name="Maven: org.springframework:spring-websocket:5.2.10.RELEASE" />
-          <element id="library" level="project" name="Maven: org.apache.logging.log4j:log4j-api:2.19.0" />
-          <element id="library" level="project" name="Maven: org.apache.logging.log4j:log4j-core:2.19.0" />
-          <element id="library" level="project" name="Maven: org.apache.logging.log4j:log4j-slf4j-impl:2.19.0" />
-          <element id="library" level="project" name="Maven: org.slf4j:slf4j-api:1.7.25" />
+          <element id="library" level="project" name="Maven: redis.clients:jedis:4.0.1" />
+          <element id="library" level="project" name="Maven: org.apache.commons:commons-pool2:2.11.1" />
+          <element id="library" level="project" name="Maven: org.json:json:20211205" />
+          <element id="library" level="project" name="Maven: com.google.code.gson:gson:2.8.9" />
         </element>
       </element>
       <element id="javaee-facet-resources" facet="DiskMirrorBackEnd/web/Web" />

@@ -5,7 +5,7 @@
 
     <groupId>io.github.BeardedManZhao</groupId>
     <artifactId>DiskMirrorBackEnd</artifactId>
-    <version>2025.02.04</version>
+    <version>2025.02.15</version>
     <packaging>jar</packaging>
     <name>diskMirror</name>
     <description>diskMirror-java</description>
@@ -75,9 +75,14 @@
             <version>2.6</version> <!-- 确保版本号正确 -->
         </dependency>
         <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+            <version>4.0.1</version>
+        </dependency>
+        <dependency>
             <groupId>io.github.BeardedManZhao</groupId>
             <artifactId>diskMirror</artifactId>
-            <version>1.4.4</version>
+            <version>1.4.6</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

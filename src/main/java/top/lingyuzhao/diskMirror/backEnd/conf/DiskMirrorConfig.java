@@ -24,6 +24,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static top.lingyuzhao.diskMirror.backEnd.conf.WebConf.IO_MODE;
 import static top.lingyuzhao.diskMirror.backEnd.conf.WebConf.LOGGER;
@@ -41,7 +43,7 @@ import static top.lingyuzhao.diskMirror.backEnd.conf.WebConf.LOGGER;
 )
 @EnableWebMvc
 public final class DiskMirrorConfig implements WebMvcConfigurer {
-
+    private static final AtomicBoolean initialized = new AtomicBoolean(false);
     /**
      * diskMirror 后端文件系统的配置对象，此配置对象的作用与 DiskMirror 中的配置对象一致，是来自同一个类的。
      */
@@ -57,6 +59,7 @@ public final class DiskMirrorConfig implements WebMvcConfigurer {
     public static Adapter adapter;
 
     static {
+        LOGGER.info("DiskMirrorConfig 类加载器: {}", DiskMirrorConfig.class.getClassLoader());
         // 盘镜后端 设置接收数据时 可在内存中存储的数据容量 超出则会临时存在磁盘中 这里是 4Mb
         DiskMirrorConfig.putOption(WebConf.MAX_IN_MEMORY_SIZE, 4096 << 10);
         // 盘镜后端 设置接收数据的最大大小，单位是字节。-1 代表无限 这是 1 Gb
@@ -81,8 +84,6 @@ public final class DiskMirrorConfig implements WebMvcConfigurer {
         DiskMirrorConfig.putOption(WebConf.SECURE_KEY, 0);
         // 设置盘镜要加载的校验模块 以及模式 默认是 空列表
         DiskMirrorConfig.putOption(WebConf.VERIFICATION_LIST, JSONArray.from(new ArrayList<>()));
-        // 设置默认的 diskMirror 组件
-        loadDefDiskMirror(false);
 
         /* 尝试加载文件中的配置 */
         // 加载配置文件 读取名为 DiskMirror_CONF 的值
@@ -107,6 +108,7 @@ public final class DiskMirrorConfig implements WebMvcConfigurer {
         } else {
             LOGGER.warn("我们建议您设置一个名为 DiskMirror_CONF 的环境变量，我们期望使用其指向的文件作为配置文件！");
         }
+        DiskMirrorConfig.reload();
     }
 
     /**
@@ -119,7 +121,7 @@ public final class DiskMirrorConfig implements WebMvcConfigurer {
         // 如果有 webConf 则 loadConf不会生效
         if (!b) {
             LOGGER.info("public static void loadConf(webConf) run!!!");
-            // 先移除 避免 putOption 的时候直接刷新了 IO_MODE 因为这个时候的 IO_MODE 类型是String 不是 DiskMirror 后面处理了一下
+            // 先移除 避免 putOption 的时候直接刷新了 IO_MODE 因为这个时候的 IO_MODE 类型是String 不是 DiskMirror, 后面处理了一下
             Object io_mode = webConf.remove(IO_MODE);
             // 加载额外配置 会覆盖原本的配置
             webConf.forEach(DiskMirrorConfig::putOption);
@@ -129,29 +131,11 @@ public final class DiskMirrorConfig implements WebMvcConfigurer {
             } catch (ClassCastException e) {
                 throw new UnsupportedOperationException("SpaceMaxSize 的格式不正确，其应该是一个，String为key类型，Long为value，其代表每个用户空间对应的数据容量！", e);
             }
-            // 这个时候才开始真正处理 DiskMirror
+            // 在这里将 string 的 io_mode 转换为枚举类型
             DiskMirrorConfig.putOption(IO_MODE, DiskMirror.valueOf(io_mode.toString()));
         } else {
             LOGGER.info("public static void loadConf(default) run!!!");
-            loadDefDiskMirror(true);
-        }
-    }
-
-    /**
-     * 加载配置 在 loadConf 函数中我们可以指定一些配置 用于初始化适配器，此函数会在 DiskMirrorConfig 实例化的时候调用，此函数可以进行重写，或者进行修改。
-     * <p>
-     * In the loadConf function, we can specify some configurations to initialize the adapter. This function will be called during the instantiation of DiskMirrorConfig, and can be rewritten or modified.
-     *
-     * @param useReLoad 是否重新实例化 DiskMirror
-     */
-    public static void loadDefDiskMirror(boolean useReLoad) {
-        if (useReLoad) {
-            // 如果在这个时候操作都准备好了（使用 useReLoad 判断是否已经准备好了）
-            // 最后就设置后端的IO模式 请确保这个是最后一个配置项目 因为在配置了此项目之后 就会构建适配器
             DiskMirrorConfig.putOption(IO_MODE, DiskMirror.LocalFSAdapter);
-        } else {
-            // 如果没有准备好就使用这样的函数赋值 这可以不触发 reload
-            WEB_CONF.put(IO_MODE, DiskMirror.LocalFSAdapter);
         }
     }
 
@@ -170,9 +154,6 @@ public final class DiskMirrorConfig implements WebMvcConfigurer {
                 break;
             case WebConf.VERIFICATION_LIST:
                 addVerifications((JSONArray) value);
-                break;
-            case IO_MODE:
-                reload();
                 break;
         }
     }
@@ -208,9 +189,43 @@ public final class DiskMirrorConfig implements WebMvcConfigurer {
      * 重新刷新配置 使其生效 此操作常用于刷新适配器等参数
      */
     public static void reload() {
-        final DiskMirror diskMirror = (DiskMirror) getOption(IO_MODE);
-        LOGGER.info("diskMirror 构建适配器:{}\n{}", diskMirror.toString(), diskMirror.getVersion());
-        adapter = diskMirror.getAdapter(WEB_CONF);
+        if (initialized.compareAndSet(false, true)) {
+            final DiskMirror diskMirror = (DiskMirror) getOption(IO_MODE);
+            LOGGER.info("diskMirror 构建空间配置器与diskMirror适配器:{}\n{}", diskMirror.toString(), diskMirror.getVersion());
+
+            ExecutorService executor = Executors.newSingleThreadExecutor();
+            Future<?> future = executor.submit(WEB_CONF::loadSpaceConfig);
+
+            try {
+                // 设置超时时间为 10 秒，可以根据需要调整
+                future.get(10, TimeUnit.SECONDS);
+            } catch (TimeoutException e) {
+                future.cancel(true);
+                LOGGER.error("loadSpaceConfig 超时!!! " + WEB_CONF.getString(Config.USE_SPACE_CONFIG_MODE) + " -> " + WEB_CONF.getString(Config.REDIS_HOST_PORT_DB), e);
+                throw new RuntimeException("loadSpaceConfig 超时", e);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                LOGGER.error("loadSpaceConfig 被中断!!! " + WEB_CONF.getString(Config.USE_SPACE_CONFIG_MODE) + " -> " + WEB_CONF.getString(Config.REDIS_HOST_PORT_DB), e);
+                throw new RuntimeException("loadSpaceConfig 被中断", e);
+            } catch (ExecutionException e) {
+                LOGGER.error("loadSpaceConfig 执行异常!!! " + WEB_CONF.getString(Config.USE_SPACE_CONFIG_MODE) + " -> " + WEB_CONF.getString(Config.REDIS_HOST_PORT_DB), e);
+                throw new RuntimeException("loadSpaceConfig 执行异常", e);
+            } finally {
+                executor.shutdown();
+                try {
+                    if (!executor.awaitTermination(60, TimeUnit.SECONDS)) {
+                        executor.shutdownNow();
+                    }
+                } catch (InterruptedException e) {
+                    executor.shutdownNow();
+                }
+            }
+
+            LOGGER.info(WEB_CONF.getString(Config.USE_SPACE_CONFIG_MODE) + " -> " + WEB_CONF.getString(Config.REDIS_HOST_PORT_DB));
+            adapter = diskMirror.getAdapter(WEB_CONF);
+        } else {
+            LOGGER.warn("reload 方法已经被调用过了，不再重复执行。");
+        }
     }
 
     /**
