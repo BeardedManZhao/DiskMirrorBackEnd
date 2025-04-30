@@ -58,6 +58,16 @@ public interface CRUD {
     String get(HttpServletRequest httpServletRequest, @RequestPart("params") MultipartFile params);
 
     /**
+     * 获取相关操作的函数
+     *
+     * @param httpServletRequest 请求对象
+     * @return 返回结果
+     */
+    @RequestMapping("/getUrlsNoRecursion")
+    @ResponseBody
+    String getUrlsNoRecursion(HttpServletRequest httpServletRequest, @RequestParam("params") MultipartFile params);
+
+    /**
      * 下载文件的后端处理函数
      *
      * @param httpServletRequest  来自前端的请求对象
