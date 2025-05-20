@@ -33,6 +33,8 @@ import java.io.InputStream;
 )
 public class FsCrud implements CRUD {
 
+    private final static IOException fileNotExist = new IOException("文件不存在");
+
     /**
      * 从配置类中获取到适配器对象
      */
@@ -183,34 +185,54 @@ public class FsCrud implements CRUD {
         jsonObject.put("userId", userId);
         jsonObject.put("fileName", fileName);
         jsonObject.put("type", type);
-        // 解密 并 提取 sk
+
+        // 解密并提取 sk
         getDiskMirrorXorSecureKey(httpServletRequest, sk == null ? 0 : sk, jsonObject);
 
-        // 设置响应头部信息
-        httpServletResponse.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
-        httpServletResponse.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-        httpServletResponse.setHeader("Pragma", "no-cache");
-        httpServletResponse.setHeader("Expires", "0");
-
-        httpServletResponse.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
-        InputStream fileInputStream = null;
-
+        // 获取文件元数据及最后修改时间
+        final JSONObject urlsNoRecursion;
         try {
-            fileInputStream = adapter.downLoad(jsonObject);
-            final int available = fileInputStream.available();
-            if (available > 0) {
-                httpServletResponse.setHeader("Content-Length", String.valueOf(available));
+            urlsNoRecursion = adapter.getUrlsNoRecursion(jsonObject.clone());
+            if (urlsNoRecursion == null) {
+                throw fileNotExist;
             }
-        } catch (IOException | UnsupportedOperationException e) {
-            WebConf.LOGGER.warn(e.toString());
+        } catch (IOException e) {
+            WebConf.LOGGER.warn("文件不存在: " + fileName);
             httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return;
         }
 
-        try (
-                ServletOutputStream outputStream = httpServletResponse.getOutputStream()
-        ) {
-            IOUtils.copy(fileInputStream, outputStream, true);
-        } catch (RuntimeException | IOException e) {
+        Long lastModified = (Long) urlsNoRecursion.get("lastModified");
+        if (lastModified == null || lastModified <= 0) {
+            lastModified = System.currentTimeMillis(); // 默认当前时间
+        }
+
+        // 设置 Last-Modified 响应头
+        httpServletResponse.setDateHeader("Last-Modified", lastModified);
+        // 设置 Content-Length 响应头
+        httpServletResponse.setHeader("Content-Length", urlsNoRecursion.getString("size"));
+
+        // 检查 If-Modified-Since 请求头
+        long ifModifiedSince = httpServletRequest.getDateHeader("If-Modified-Since");
+        if (ifModifiedSince >= lastModified) {
+            // 文件未修改，返回 304 Not Modified
+            httpServletResponse.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+            return;
+        }
+
+        // 设置其他响应头
+        httpServletResponse.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+        httpServletResponse.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+
+        try (InputStream fileInputStream = adapter.downLoad(jsonObject)) {
+            if (fileInputStream == null) {
+                httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                return;
+            }
+            try (ServletOutputStream outputStream = httpServletResponse.getOutputStream()) {
+                IOUtils.copy(fileInputStream, outputStream, true);
+            }
+        } catch (IOException | RuntimeException e) {
             WebConf.LOGGER.warn(e.toString());
             httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
         }
