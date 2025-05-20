@@ -52,6 +52,7 @@ url，在诸多场景中可以简化IO相关的实现操作，能够降低开发
 
 ```json
 {
+  "url.path.prefix": "/DiskMirrorBackEnd",
   "root.dir": "/DiskMirror/data",
   "fs.defaultFS": "hdfs://127.0.0.1:8020",
   "ok.value": "ok!!!!",
@@ -535,7 +536,7 @@ setTimeout(() => {
 
 ### 2025.05.20 版本发布
 
-- 为 download 操作添加了新的第二代，支持客户端缓存的下载方式，多次下载的情况下速度更快。
+- 为 download 操作添加了新的第二代，支持客户端缓存的下载方式，多次下载的情况下速度更快。但是需要 `WebConf.INDEX_URL` 的配置，要精确到 `/FsCrud` 的上一级，默认是 `DiskMirrorBackEnd`
 
 ### 2025.04.15 版本发布
 

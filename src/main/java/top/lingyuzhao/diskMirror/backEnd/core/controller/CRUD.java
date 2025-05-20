@@ -3,9 +3,12 @@ package top.lingyuzhao.diskMirror.backEnd.core.controller;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import top.lingyuzhao.diskMirror.backEnd.conf.WebConf;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import static top.lingyuzhao.diskMirror.backEnd.conf.DiskMirrorConfig.WEB_CONF;
 
 /**
  * 具有增删改查功能的控制器接口
@@ -79,7 +82,7 @@ public interface CRUD {
     @RequestMapping(
             value = "/downLoad2/{userId:\\d+}/{type:[a-zA-Z]+}/{sk}/**",
             method = {RequestMethod.GET, RequestMethod.POST},
-            produces = MediaType.APPLICATION_OCTET_STREAM_VALUE
+            produces = MediaType.ALL_VALUE
     )
     @ResponseBody
     default void downLoad2(HttpServletRequest httpServletRequest,
@@ -91,9 +94,8 @@ public interface CRUD {
         // 从请求 URI 中提取完整路径
         final String requestURI = httpServletRequest.getRequestURI();
         // 获取路径前缀（不带通配符的部分）的长度
-        final int le = "/FsCrud/downLoad2/".length() + String.valueOf(userId).length() + 1 + type.length() + 1 + sk.length();
-        // 设置缓存 1 天
-        httpServletResponse.setHeader("Cache-Control", "max-age=86400");
+        // WebConf.LOGGER.info(requestURI); /DiskMirrorBackEnd/FsCrud/downLoad2/18/Binary/0/Article/Image/6144560253746526/79bccc35c336a04977729d6bc33329831ec3a0bd50fe6c032c4a50ff8f1ec677.webp
+        final int le = WEB_CONF.getString(WebConf.URL_PATH_PREFIX).length() + "/FsCrud/downLoad2/".length() + userId.length() + 1 + type.length() + 1 + sk.length();
         // 提取文件名/路径部分 requestURI.substring(le) 现在 fileNameWithPath 就是 ** 匹配的内容
         downLoad(httpServletRequest, httpServletResponse, userId, type, requestURI.substring(le), Integer.parseInt(sk));
     }

@@ -60,6 +60,8 @@ public final class DiskMirrorConfig implements WebMvcConfigurer {
 
     static {
         LOGGER.info("DiskMirrorConfig 类加载器: {}", DiskMirrorConfig.class.getClassLoader());
+        // 盘镜后端 服务器 访问地址
+        DiskMirrorConfig.putOption(WebConf.URL_PATH_PREFIX, "/DiskMirrorBackEnd");
         // 盘镜后端 设置接收数据时 可在内存中存储的数据容量 超出则会临时存在磁盘中 这里是 4Mb
         DiskMirrorConfig.putOption(WebConf.MAX_IN_MEMORY_SIZE, 4096 << 10);
         // 盘镜后端 设置接收数据的最大大小，单位是字节。-1 代表无限 这是 1 Gb
