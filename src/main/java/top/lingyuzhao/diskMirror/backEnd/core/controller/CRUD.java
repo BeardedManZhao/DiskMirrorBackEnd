@@ -8,6 +8,9 @@ import top.lingyuzhao.diskMirror.backEnd.conf.WebConf;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+
 import static top.lingyuzhao.diskMirror.backEnd.conf.DiskMirrorConfig.WEB_CONF;
 
 /**
@@ -80,7 +83,7 @@ public interface CRUD {
      * @param sk                  操作的时候需要的密钥，此密钥可以不进行加密，当cookie获取不到的时候，才会调用此密钥！
      */
     @RequestMapping(
-            value = "/downLoad2/{userId:\\d+}/{type:[a-zA-Z]+}/{sk}/**",
+            value = "/downLoad2/{userId:-*\\d+}/{type:[a-zA-Z]+}/{sk}/**",
             method = {RequestMethod.GET, RequestMethod.POST},
             produces = MediaType.ALL_VALUE
     )
@@ -97,7 +100,11 @@ public interface CRUD {
         // WebConf.LOGGER.info(requestURI); /DiskMirrorBackEnd/FsCrud/downLoad2/18/Binary/0/Article/Image/6144560253746526/79bccc35c336a04977729d6bc33329831ec3a0bd50fe6c032c4a50ff8f1ec677.webp
         final int le = WEB_CONF.getString(WebConf.URL_PATH_PREFIX).length() + "/FsCrud/downLoad2/".length() + userId.length() + 1 + type.length() + 1 + sk.length();
         // 提取文件名/路径部分 requestURI.substring(le) 现在 fileNameWithPath 就是 ** 匹配的内容
-        downLoad(httpServletRequest, httpServletResponse, userId, type, requestURI.substring(le), Integer.parseInt(sk));
+        try {
+            downLoad(httpServletRequest, httpServletResponse, userId, type, URLDecoder.decode(requestURI.substring(le), httpServletRequest.getCharacterEncoding()), Integer.parseInt(sk));
+        } catch (UnsupportedEncodingException e) {
+            WebConf.LOGGER.warn("不支持的编码，无法为路径解码：" + requestURI, e);
+        }
     }
 
     /**
