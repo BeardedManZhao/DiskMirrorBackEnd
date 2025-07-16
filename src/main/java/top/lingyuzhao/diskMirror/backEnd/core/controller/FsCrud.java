@@ -11,6 +11,7 @@ import top.lingyuzhao.diskMirror.backEnd.utils.HttpUtils;
 import top.lingyuzhao.diskMirror.conf.Config;
 import top.lingyuzhao.diskMirror.core.Adapter;
 import top.lingyuzhao.utils.IOUtils;
+import top.lingyuzhao.utils.StrUtils;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
@@ -18,6 +19,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.HashSet;
 
 /**
  * 文件系统的增删操作接口
@@ -34,6 +38,14 @@ import java.io.InputStream;
 public class FsCrud implements CRUD {
 
     private final static IOException fileNotExist = new IOException("文件不存在");
+    private final static HashSet<String> VIDEO_TYPES = new HashSet<>();
+
+    static {
+        VIDEO_TYPES.add("mp4");
+        VIDEO_TYPES.add("webm");
+        VIDEO_TYPES.add("ogv");
+        VIDEO_TYPES.add("ogg");
+    }
 
     /**
      * 从配置类中获取到适配器对象
@@ -52,7 +64,7 @@ public class FsCrud implements CRUD {
      */
     public FsCrud(Adapter adapter) {
         this.adapter = adapter;
-        this.errorFileIsNull  = HttpUtils.getResJsonStr(new JSONObject(), "您的文件数据为空，请确保您要上传的文件数据存储在 ”file“ 对应的请求数据包中!!!");
+        this.errorFileIsNull = HttpUtils.getResJsonStr(new JSONObject(), "您的文件数据为空，请确保您要上传的文件数据存储在 ”file“ 对应的请求数据包中!!!");
         this.errorParamsIsNull = HttpUtils.getResJsonStr(new JSONObject(), "您的请求参数为空，请确保您的请求参数 json 字符串存储在 ”params“ 对应的请求数据包中!");
     }
 
@@ -178,17 +190,22 @@ public class FsCrud implements CRUD {
     }
 
     @Override
+    @SuppressWarnings("all")
     public void downLoad(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
+                         @RequestHeader(name = "Range", required = false) String rangeHeader,
                          @PathVariable("userId") String userId, @PathVariable("type") String type,
-                         String fileName, Integer sk) {
+                         @RequestParam("fileName") String fileName,
+                         @RequestParam(value = "sk", defaultValue = "0", required = false) Integer sk) throws UnsupportedEncodingException {
         final JSONObject jsonObject = new JSONObject();
         jsonObject.put("userId", userId);
         jsonObject.put("fileName", fileName);
         jsonObject.put("type", type);
-
+        // 获取到后缀
+        final String substring = fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase();
+        // 判断是否是视频
+        final boolean isVideo = VIDEO_TYPES.contains(substring);
         // 解密并提取 sk
         getDiskMirrorXorSecureKey(httpServletRequest, sk == null ? 0 : sk, jsonObject);
-
         // 获取文件元数据及最后修改时间
         final JSONObject urlsNoRecursion;
         try {
@@ -202,15 +219,16 @@ public class FsCrud implements CRUD {
             return;
         }
 
-        Long lastModified = (Long) urlsNoRecursion.get("lastModified");
-        if (lastModified == null || lastModified <= 0) {
+        long lastModified = urlsNoRecursion.getLongValue("lastModified");
+        if (lastModified <= 0) {
             lastModified = System.currentTimeMillis(); // 默认当前时间
         }
 
         // 设置 Last-Modified 响应头
         httpServletResponse.setDateHeader("Last-Modified", lastModified);
         // 设置 Content-Length 响应头
-        httpServletResponse.setHeader("Content-Length", urlsNoRecursion.getString("size"));
+        final String fSize = urlsNoRecursion.getString("size");
+        httpServletResponse.setHeader("Content-Length", fSize);
 
         // 检查 If-Modified-Since 请求头
         long ifModifiedSince = httpServletRequest.getDateHeader("If-Modified-Since");
@@ -220,17 +238,50 @@ public class FsCrud implements CRUD {
             return;
         }
 
+        final String s = URLEncoder.encode(StrUtils.splitBy(fileName, '/', 2)[0], "UTF-8");
         // 设置其他响应头
-        httpServletResponse.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
-        httpServletResponse.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+        httpServletResponse.setHeader("Content-Disposition", "attachment; filename=\"" + s + "\"; filename*=UTF-8''" + s);
+        if (isVideo) {
+            httpServletResponse.setContentType("video/" + substring);
+            httpServletResponse.setHeader("Accept-Ranges", "bytes");
+        } else {
+            httpServletResponse.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+        }
 
         try (InputStream fileInputStream = adapter.downLoad(jsonObject)) {
             if (fileInputStream == null) {
                 httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 return;
             }
+
+            long[] range = null;
+            if (isVideo) {
+                if (rangeHeader != null) {
+                    // 解析 Range 头，如：bytes=0-1023
+                    String[] ranges = rangeHeader.substring(6).split("-");
+                    long start = Long.parseLong(ranges[0]);
+                    long end = ranges.length > 1 ? Long.parseLong(ranges[1]) : Long.parseLong(fSize) - 1;
+                    range = new long[]{start, end};
+                }
+            }
+
             try (ServletOutputStream outputStream = httpServletResponse.getOutputStream()) {
-                IOUtils.copy(fileInputStream, outputStream, true);
+                if (range != null) {
+                    // 返回 206 Partial Content
+                    httpServletResponse.setStatus(HttpServletResponse.SC_PARTIAL_CONTENT);
+                    httpServletResponse.setHeader("Content-Range", "bytes " + range[0] + "-" + range[1] + "/" + fSize);
+                    httpServletResponse.setContentLengthLong(range[1] - range[0] + 1);
+                    final byte[] buffer = new byte[4096];
+                    fileInputStream.skip(range[0]);
+                    long remaining = range[1] - range[0] + 1;
+                    int len;
+                    while ((len = fileInputStream.read(buffer, 0, (int) Math.min(buffer.length, remaining))) > 0) {
+                        outputStream.write(buffer, 0, len);
+                        remaining -= len;
+                    }
+                } else {
+                    IOUtils.copy(fileInputStream, outputStream, true);
+                }
             }
         } catch (IOException | RuntimeException e) {
             WebConf.LOGGER.warn(e.toString());

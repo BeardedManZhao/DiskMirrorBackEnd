@@ -43,7 +43,6 @@ import static top.lingyuzhao.diskMirror.backEnd.conf.WebConf.LOGGER;
 )
 @EnableWebMvc
 public final class DiskMirrorConfig implements WebMvcConfigurer {
-    private static final AtomicBoolean initialized = new AtomicBoolean(false);
     /**
      * diskMirror 后端文件系统的配置对象，此配置对象的作用与 DiskMirror 中的配置对象一致，是来自同一个类的。
      */
@@ -52,7 +51,7 @@ public final class DiskMirrorConfig implements WebMvcConfigurer {
      * 回复页面要使用的字符集
      */
     public static final String CHARSET = "UTF-8";
-
+    private static final AtomicBoolean initialized = new AtomicBoolean(false);
     /**
      * 操作过程中需要使用的适配器对象
      */

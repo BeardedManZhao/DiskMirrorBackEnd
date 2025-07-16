@@ -7,7 +7,6 @@ import top.lingyuzhao.diskMirror.backEnd.conf.WebConf;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
@@ -90,6 +89,7 @@ public interface CRUD {
     @ResponseBody
     default void downLoad2(HttpServletRequest httpServletRequest,
                            HttpServletResponse httpServletResponse,
+                           @RequestHeader(name = "Range", required = false) String rangeHeader,
                            @PathVariable("userId") String userId,
                            @PathVariable("type") String type,
                            @PathVariable("sk") String sk) {
@@ -101,7 +101,7 @@ public interface CRUD {
         final int le = WEB_CONF.getString(WebConf.URL_PATH_PREFIX).length() + "/FsCrud/downLoad2/".length() + userId.length() + 1 + type.length() + 1 + sk.length();
         // 提取文件名/路径部分 requestURI.substring(le) 现在 fileNameWithPath 就是 ** 匹配的内容
         try {
-            downLoad(httpServletRequest, httpServletResponse, userId, type, URLDecoder.decode(requestURI.substring(le), httpServletRequest.getCharacterEncoding()), Integer.parseInt(sk));
+            downLoad(httpServletRequest, httpServletResponse, rangeHeader, userId, type, URLDecoder.decode(requestURI.substring(le), httpServletRequest.getCharacterEncoding()), Integer.parseInt(sk));
         } catch (UnsupportedEncodingException e) {
             WebConf.LOGGER.warn("不支持的编码，无法为路径解码：" + requestURI, e);
         }
@@ -123,11 +123,11 @@ public interface CRUD {
             produces = MediaType.APPLICATION_OCTET_STREAM_VALUE
     )
     @ResponseBody
-    void downLoad(HttpServletRequest httpServletRequest,
-                  HttpServletResponse httpServletResponse,
+    void downLoad(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
+                  @RequestHeader(name = "Range", required = false) String rangeHeader,
                   @PathVariable("userId") String userId, @PathVariable("type") String type,
-                  String fileName, Integer sk
-    );
+                  @RequestParam("fileName") String fileName,
+                  @RequestParam(value = "sk", defaultValue = "0", required = false) Integer sk) throws UnsupportedEncodingException;
 
 
     /**
