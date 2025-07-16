@@ -238,7 +238,7 @@ public class FsCrud implements CRUD {
             return;
         }
 
-        final String s = URLEncoder.encode(StrUtils.splitBy(fileName, '/', 2)[0], "UTF-8");
+        final String s = URLEncoder.encode(StrUtils.splitByLast(fileName, '/', 2)[0], "UTF-8");
         // 设置其他响应头
         httpServletResponse.setHeader("Content-Disposition", "attachment; filename=\"" + s + "\"; filename*=UTF-8''" + s);
         if (isVideo) {
